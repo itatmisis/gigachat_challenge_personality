@@ -1,3 +1,4 @@
+from schemas.prompt import PromptRequest
 from shared.containers import Container
 
 
@@ -13,25 +14,15 @@ class TestIntegration:
     def test_kandinsky_get_model_ok(self, combat_container: Container):
         print(combat_container.kandinsky_supplier.get_model())
 
-    def test_kandinsky_generate_ok(self, combat_container: Container):
-        print(
-            combat_container.kandinsky_supplier.generate(
-                "Sun in sky",
-                style="ANIME",
-                width=1023,
-                height=1023,
-                negative_prompt=None,
-            )
-        )
-
-    def test_kandinsky_generate_and_wait_ok(self, combat_container: Container):
-        print(combat_container.kandinsky_supplier.generate_and_wait("Sun in sky"))
-
     def test_kandinsky_save_ok(self, combat_container: Container):
-        imgs = combat_container.kandinsky_supplier.generate_and_wait(
-            "Undeaged anime sticker girl with (plush bear) in left hand and (green flag) in right hand",
-            style="ANIME",
-            images=3,
+        imgs = combat_container.kandinsky_supplier.generate_and_safe(
+            PromptRequest(
+                prompts=["Half-life"] * 9,
+                style="ANIME",
+                width=1024,
+                height=1024,
+                sticker=True,
+            )
         )
         if imgs is None:
             return

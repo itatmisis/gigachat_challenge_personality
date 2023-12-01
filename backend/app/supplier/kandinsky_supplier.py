@@ -1,8 +1,8 @@
 import base64
+import random
 import time
 import uuid
 from dataclasses import dataclass
-from pathlib import Path
 
 import requests
 import ujson
@@ -19,6 +19,90 @@ _default_negative_prompt = (
     "gross proportions, malformed limbs, missing arms, missing legs, extra arms, "
     "extra legs, fused fingers, too many fingers, long neck, username, watermark, signature"
 )
+_mood = [
+    "Enthusiastic",
+    "Content",
+    "Exhilarated",
+    "Festive",
+    "Playful",
+    "Adorable",
+    "Excited",
+    "Lovely",
+    "Cute",
+    "Happy",
+    "Hopeful",
+    "Delighted",
+    "Blissful",
+    "Cheerful",
+    "Ecstatic",
+    "Joyful",
+    "Energetic",
+]
+_color_style = [
+    "Glossy",
+    "Bold Colors",
+    "Monochrome",
+    "Flashy Colors",
+    "Intense Colors",
+    "Primary Color",
+    "Cool Colors",
+    "Vibrant Color",
+    "Soft Color",
+    "Sparkly Colors",
+    "Textured",
+    "Tertiary Color",
+    "Holographic",
+    "Earthy",
+    "Muted Color",
+    "Secondary Color",
+    "Bright Colors",
+    "Warm Colors",
+    "Satin Colors",
+    "Electric Colors",
+    "Dark",
+    "Saturated Colors",
+    "Pastel",
+    "Neon",
+    "Matte",
+]
+_draw_style = [
+    "art toy style",
+    "Minimal",
+    "Algorithmic art",
+    "Naive Art Style",
+    "Geometric",
+    "light art style",
+    "Disney Pixar",
+    "Pixel Art",
+    "kinetic art style",
+    "Pokemon Card",
+    "Pencil Drawn",
+    "Hand-Drawn",
+    "Kawaii",
+    "Art brut style",
+    "Photorealism",
+    "Anime",
+    "Rough Charcoal",
+    "Vintage",
+    "Concept Art",
+    "Gothic",
+    "Graffiti",
+    "Street Art",
+    "Folk Art",
+    "Sketch",
+    "Yugioh Design",
+    "mural art style",
+    "outsider art style",
+    "Deviant Art",
+    "Cartoon",
+    "Digital Art",
+    "Disney",
+    "Chibi",
+    "Retro",
+    "Artstation",
+    "Pop Art",
+]
+_sticker_ending = "Contour, Vector, Fully White Background, Detailed"
 
 
 @dataclass
@@ -41,12 +125,21 @@ class KandinskySupplier:
         logger.info("status: kandinsky model got, model: {}", model)
         return model
 
+    def populate_prompt(self, prompt: str) -> str:
+        return (
+            f"{prompt}, realism, cute mood, {random.choice(_color_style)}, "
+            f"{random.choice(_draw_style)}, {_sticker_ending}, Sticker"
+        )
+
     def generate(self, req: PromptRequest) -> list[uuid.UUID]:
         idxs = []
-        for _ in range(req.images):
+        for idx, prompt in enumerate(req.prompts):
+            if req.sticker:
+                req.prompts[idx] = self.populate_prompt(prompt)
+
             idxs.append(
                 self._send_generate_request(
-                    prompt=req.prompt,
+                    prompt=req.prompts[idx],
                     style=req.style,
                     width=req.width,
                     height=req.height,
@@ -62,7 +155,7 @@ class KandinskySupplier:
         style: str | None,
         width: int,
         height: int,
-        negative_prompt: str | None,
+        negative_prompt: str | None = None,
     ) -> uuid.UUID:
         params = {
             "type": "GENERATE",
@@ -97,32 +190,44 @@ class KandinskySupplier:
         return id_
 
     def wait_generation(
-        self, request_id: uuid.UUID, attempts: int = 3, delay: float = 2
+        self, request_id: uuid.UUID, attempts: int = 5, delay: float = 3
     ) -> bytes | None:
+        logger.info(
+            "status: kandinsky image generation getting result, request_id: {}",
+            request_id,
+        )
         while attempts > 0:
-            logger.info(
-                "status: kandinsky image generation getting result, request_id: {}",
-                request_id,
-            )
             response = self.session.get(
                 self._url + "/key/api/v1/text2image/status/" + str(request_id)
             )
             data = response.json()
             if data["status"] == "DONE":
+                if data["censored"]:
+                    logger.warning(
+                        "status: image for censored, request_id: {}", request_id
+                    )
+                    return None
                 return data["images"][0].encode()
 
             attempts -= 1
             time.sleep(delay)
-        logger.warning("status: unable to get image, requist_id: {}", request_id)
+        logger.warning("status: unable to get image, request_id: {}", request_id)
 
-    def generate_and_wait(self, req: PromptRequest) -> list[bytes] | None:
+    def generate_and_safe(self, req: PromptRequest) -> None:
         idxs = self.generate(req)
 
-        images_bytes = []
-        for idx in idxs:
-            images_bytes.append(self.wait_generation(idx))
+        images = []
+        for idx, req_id in enumerate(idxs):
+            img = self.wait_generation(req_id)
+            if img is not None:
+                images.append((img, req.prompts[idx]))
 
-        return images_bytes
+        for img, prompt in images:
+            with open(  # noqa: SCS109
+                f"data/tests/{prompt.replace(' ', '-')}-{str(uuid.uuid4())[:8]}.png",
+                "wb",
+            ) as fh:
+                fh.write(base64.decodebytes(img))
 
     def fetch(self, req: FetchRequest) -> list[FetchResponse]:
         imgs = []
@@ -132,7 +237,3 @@ class KandinskySupplier:
                 imgs.append(FetchResponse(img=img, id=id_))
 
         return imgs
-
-    def save(self, img: bytes, path: str | Path) -> None:
-        with open(path, "wb") as fh:  # noqa: SCS109
-            fh.write(base64.decodebytes(img))
