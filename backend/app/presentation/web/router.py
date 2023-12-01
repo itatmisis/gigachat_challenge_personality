@@ -1,9 +1,11 @@
 import enum
+import uuid
 
 from fastapi import APIRouter
 
 from presentation.dependencies import container
 from presentation.web.schemas import HealthResponse, HealthStatuses
+from schemas.prompt import FetchRequest, PromptRequest
 from shared.base import logger
 
 router = APIRouter(prefix="")
@@ -32,3 +34,13 @@ async def check_server_health() -> HealthResponse:
         )
 
     return HealthResponse(status=HealthStatuses.OK)
+
+
+@router.post("/images/generate", response_model=list[uuid.UUID])
+def generate_image(req: PromptRequest) -> list[uuid.UUID]:
+    return container.prompt_service.generate_image(req)
+
+
+@router.post("/images/wait", response_model=list[bytes])
+def images_wait(req: FetchRequest) -> list[bytes]:
+    return container.prompt_service.fetch_images(req)

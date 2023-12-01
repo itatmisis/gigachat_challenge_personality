@@ -7,6 +7,7 @@ from pathlib import Path
 import requests
 import ujson
 
+from schemas.prompt import FetchRequest, PromptRequest
 from shared.base import logger
 from shared.settings import app_settings
 
@@ -40,7 +41,22 @@ class KandinskySupplier:
         logger.info("status: kandinsky model got, model: {}", model)
         return model
 
-    def generate(
+    def generate(self, req: PromptRequest) -> list[uuid.UUID]:
+        idxs = []
+        for _ in range(req.images):
+            idxs.append(
+                self._send_generate_request(
+                    prompt=req.prompt,
+                    style=req.style,
+                    width=req.width,
+                    height=req.height,
+                    negative_prompt=req.negative_prompt,
+                )
+            )
+
+        return idxs
+
+    def _send_generate_request(
         self,
         prompt: str,
         style: str | None,
@@ -81,7 +97,7 @@ class KandinskySupplier:
         return id_
 
     def wait_generation(
-        self, request_id: uuid.UUID, attempts: int = 10, delay: int = 10
+        self, request_id: uuid.UUID, attempts: int = 3, delay: float = 2
     ) -> bytes | None:
         while attempts > 0:
             logger.info(
@@ -89,43 +105,33 @@ class KandinskySupplier:
                 request_id,
             )
             response = self.session.get(
-                self._url + "/key/api/v1/text2image/status/" + str(request_id),
+                self._url + "/key/api/v1/text2image/status/" + str(request_id)
             )
             data = response.json()
             if data["status"] == "DONE":
-                return [img.encode() for img in data["images"]][0]
+                return data["images"][0].encode()
 
             attempts -= 1
             time.sleep(delay)
+        logger.warning("status: unable to get image, requist_id: {}", request_id)
 
-    def generate_and_wait(
-        self,
-        prompt: str,
-        # https://cdn.fusionbrain.ai/static/styles/api
-        # KANDINSKY, UHD, ANIME, DEFAULT
-        style: str | None = None,
-        images: int = 1,
-        width: int = 1024,
-        height: int = 1024,
-        negative_prompt: str | None = _default_negative_prompt,
-    ) -> list[bytes] | None:
-        idxs = []
-        for _ in range(images):
-            idxs.append(
-                self.generate(
-                    prompt=prompt,
-                    style=style,
-                    width=width,
-                    height=height,
-                    negative_prompt=negative_prompt,
-                )
-            )
+    def generate_and_wait(self, req: PromptRequest) -> list[bytes] | None:
+        idxs = self.generate(req)
 
         images_bytes = []
         for idx in idxs:
             images_bytes.append(self.wait_generation(idx))
 
         return images_bytes
+
+    def fetch(self, req: FetchRequest) -> list[bytes]:
+        imgs = []
+        for id_ in req.ids:
+            img = self.wait_generation(id_, attempts=req.attempts, delay=req.delay)
+            if img:
+                imgs.append(img)
+
+        return imgs
 
     def save(self, img: bytes, path: str | Path) -> None:
         with open(path, "wb") as fh:  # noqa: SCS109

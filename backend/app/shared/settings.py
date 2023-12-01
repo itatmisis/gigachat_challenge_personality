@@ -20,6 +20,7 @@ class AppSettings(BaseSettings):
 
     kandinsky_api_key: str
     kandinsky_api_secret: str
+    gigachat_credentials: str
 
     model_config = SettingsConfigDict(env_prefix="_", env_file=".env")
 
