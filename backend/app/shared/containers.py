@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-from repository.db_repository import DbRepository
 from repository.redis_repository import RedisRepository
 from service.heath_service import HeathService
 from service.prompt_service import PromptService
@@ -17,8 +16,7 @@ class Container:
 
 
 def init_combat_container() -> Container:
-    db_repository = DbRepository()
-    heath_service = HeathService(db_repository=db_repository)
+    heath_service = HeathService()
     kandinsky_supplier = KandinskySupplier()
     redis_repository = RedisRepository()
     gigachat_supplier = GigachatSupplier()

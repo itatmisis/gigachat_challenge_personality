@@ -7,7 +7,6 @@ services:
       _UVICORN_HOST: "0.0.0.0"
       _UVICORN_PORT: 8001
       _REDIS_HOST: "redis"
-      _PG_HOST: "postgres"
     build:
       context: .
       dockerfile: DockerfileWeb
@@ -22,28 +21,6 @@ services:
       - "./app/.env:/backend/app/.env"
     ports:
       - 8001:8001
-
-  postgres:
-    image: postgis/postgis:16-3.4-alpine
-    environment:
-      POSTGRES_USER: db_main
-      POSTGRES_PASSWORD: db_main
-      PGUSER: db_main
-      PGPASSWORD: db_main
-      PGDATA: /var/lib/postgresql/data/pgdata
-    ports:
-      - "5432:5432"
-    restart: unless-stopped
-    volumes:
-      - ./extra/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./app/data/pg/:/var/lib/postgresql/data/
-    networks:
-      - backend
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   redis:
     image: redis:7.2.3-bookworm
