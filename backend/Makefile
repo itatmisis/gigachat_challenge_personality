@@ -13,9 +13,6 @@ run-web:
 run-infra:
 	docker compose -f docker-compose.yaml up -d postgres redis
 
-run-upload:
-	$(PYTHON) app/upload_entrypoint.py
-
 test-integration:
 	cd app && $(PYTHON_PRE) -m pytest -v -s
 
