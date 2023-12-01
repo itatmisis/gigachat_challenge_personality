@@ -29,7 +29,12 @@ class KandinskySupplier:
         return data[0]["id"]
 
     def generate(
-        self, prompt: str, images: int = 1, width: int = 1024, height: int = 1024
+        self,
+        prompt: str,
+        style: str | None = None,
+        images: int = 1,
+        width: int = 1024,
+        height: int = 1024,
     ) -> uuid.UUID:
         params = {
             "type": "GENERATE",
@@ -37,6 +42,7 @@ class KandinskySupplier:
             "width": width,
             "height": height,
             "generateParams": {"query": f"{prompt}"},
+            "style": style,
         }
 
         data = {
@@ -69,9 +75,18 @@ class KandinskySupplier:
             time.sleep(delay)
 
     def generate_and_wait(
-        self, prompt: str, images: int = 1, width: int = 1024, height: int = 1024
+        self,
+        prompt: str,
+        # https://cdn.fusionbrain.ai/static/styles/api
+        # KANDINSKY, UHD, ANIME, DEFAULT
+        style: str | None = None,
+        images: int = 1,
+        width: int = 1024,
+        height: int = 1024,
     ) -> list[bytes] | None:
-        id_ = self.generate(prompt=prompt, images=images, width=width, height=height)
+        id_ = self.generate(
+            prompt=prompt, style=style, images=images, width=width, height=height
+        )
         return self.wait_generation(id_)
 
     def save(self, img: bytes, path: str | Path) -> None:
