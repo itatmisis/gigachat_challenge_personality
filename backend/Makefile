@@ -15,7 +15,7 @@ run-web:
 	cd app && $(PYTHON_PRE) -m poetry run python3 web_entrypoint.py
 
 run-infra:
-	docker compose -f docker-compose.yaml up -d postgres redis
+	docker compose -f docker-compose.yaml up -d redis
 
 test-integration:
 	cd app && $(PYTHON_PRE) -m pytest -v -s
