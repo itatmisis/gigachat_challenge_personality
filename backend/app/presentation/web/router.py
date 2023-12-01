@@ -5,7 +5,7 @@ from fastapi import APIRouter
 
 from presentation.dependencies import container
 from presentation.web.schemas import HealthResponse, HealthStatuses
-from schemas.prompt import FetchRequest, PromptRequest
+from schemas.prompt import FetchRequest, FetchResponse, PromptRequest
 from shared.base import logger
 
 router = APIRouter(prefix="")
@@ -41,6 +41,6 @@ def generate_image(req: PromptRequest) -> list[uuid.UUID]:
     return container.prompt_service.generate_image(req)
 
 
-@router.post("/images/wait", response_model=list[bytes])
-def images_wait(req: FetchRequest) -> list[bytes]:
+@router.post("/images/wait", response_model=list[FetchResponse])
+def images_wait(req: FetchRequest) -> list[FetchResponse]:
     return container.prompt_service.fetch_images(req)

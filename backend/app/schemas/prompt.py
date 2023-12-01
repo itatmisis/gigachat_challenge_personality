@@ -1,5 +1,7 @@
 import uuid
 
+from pydantic import ConfigDict, Field
+
 from schemas.base import CamelizedBaseModel
 
 _default_negative_prompt = (
@@ -24,8 +26,42 @@ class PromptRequest(CamelizedBaseModel):
     height: int = 1024
     negative_prompt: str | None = _default_negative_prompt
 
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "prompt": "Anime sticker girl with fazbear in left hand and green flag in right hand",
+                    "style": "ANIME",
+                    "images": 1,
+                    "width": 1024,
+                    "height": 1024,
+                    "negative_prompt": negative_prompt,
+                }
+            ]
+        },
+    )
+
 
 class FetchRequest(CamelizedBaseModel):
     ids: list[uuid.UUID] = [uuid.UUID("34418e36-46b9-4ec5-93bf-fd40c0a6a50a")]
     attempts: int = 3
     delay: int = 2
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "ids": ["34418e36-46b9-4ec5-93bf-fd40c0a6a50a"],
+                    "attempts": 3,
+                    "delay": 2,
+                }
+            ]
+        },
+    )
+
+
+class FetchResponse(CamelizedBaseModel):
+    id_: uuid.UUID = Field(..., alias="id")
+    img: bytes

@@ -7,7 +7,7 @@ from pathlib import Path
 import requests
 import ujson
 
-from schemas.prompt import FetchRequest, PromptRequest
+from schemas.prompt import FetchRequest, FetchResponse, PromptRequest
 from shared.base import logger
 from shared.settings import app_settings
 
@@ -124,12 +124,12 @@ class KandinskySupplier:
 
         return images_bytes
 
-    def fetch(self, req: FetchRequest) -> list[bytes]:
+    def fetch(self, req: FetchRequest) -> list[FetchResponse]:
         imgs = []
         for id_ in req.ids:
             img = self.wait_generation(id_, attempts=req.attempts, delay=req.delay)
             if img:
-                imgs.append(img)
+                imgs.append(FetchResponse(img=img, id=id_))
 
         return imgs
 
