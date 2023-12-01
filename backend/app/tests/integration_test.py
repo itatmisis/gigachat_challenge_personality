@@ -20,6 +20,8 @@ class TestIntegration:
         print(combat_container.kandinsky_supplier.generate_and_wait("Sun in sky"))
 
     def test_kandinsky_save_ok(self, combat_container: Container):
-        imgs = combat_container.kandinsky_supplier.generate_and_wait("Sun in sky")
+        imgs = combat_container.kandinsky_supplier.generate_and_wait(
+            "Аниме девочка с флагом и медведем"
+        )
         for idx, img in enumerate(imgs):
-            combat_container.kandinsky_supplier.save(img, f"{idx}.png")
+            combat_container.kandinsky_supplier.save(img, f"data/tests/{idx}.png")
