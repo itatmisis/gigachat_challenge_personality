@@ -7,7 +7,17 @@ from pathlib import Path
 import requests
 import ujson
 
+from shared.base import logger
 from shared.settings import app_settings
+
+_default_negative_prompt = (
+    "lowres, text, error, cropped, worst quality, low quality, "
+    "jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, "
+    "mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, "
+    "dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, "
+    "gross proportions, malformed limbs, missing arms, missing legs, extra arms, "
+    "extra legs, fused fingers, too many fingers, long neck, username, watermark, signature"
+)
 
 
 @dataclass
@@ -26,21 +36,25 @@ class KandinskySupplier:
     def get_model(self) -> str:
         response = self.session.get(self._url + "/key/api/v1/models")
         data = response.json()
-        return data[0]["id"]
+        model = data[0]["id"]
+        logger.info("status: kandinsky model got, model: {}", model)
+        return model
 
     def generate(
         self,
         prompt: str,
-        style: str | None = None,
-        width: int = 1024,
-        height: int = 1024,
+        style: str | None,
+        width: int,
+        height: int,
+        negative_prompt: str | None,
     ) -> uuid.UUID:
         params = {
             "type": "GENERATE",
             "numImages": 1,
             "width": width,
             "height": height,
-            "generateParams": {"query": f"{prompt}"},
+            "generateParams": {"query": prompt},
+            "negativePromptUnclip": negative_prompt,
             "style": style,
         }
 
@@ -57,12 +71,23 @@ class KandinskySupplier:
 
         data = res.json()
 
-        return uuid.UUID(data["uuid"])
+        id_ = uuid.UUID(data["uuid"])
+        logger.info(
+            "status: kandinsky image generation requested, prompt: {}, id: {}",
+            prompt,
+            id_,
+        )
+
+        return id_
 
     def wait_generation(
         self, request_id: uuid.UUID, attempts: int = 10, delay: int = 10
     ) -> bytes | None:
         while attempts > 0:
+            logger.info(
+                "status: kandinsky image generation getting result, request_id: {}",
+                request_id,
+            )
             response = self.session.get(
                 self._url + "/key/api/v1/text2image/status/" + str(request_id),
             )
@@ -82,6 +107,7 @@ class KandinskySupplier:
         images: int = 1,
         width: int = 1024,
         height: int = 1024,
+        negative_prompt: str | None = _default_negative_prompt,
     ) -> list[bytes] | None:
         idxs = []
         for _ in range(images):
@@ -91,6 +117,7 @@ class KandinskySupplier:
                     style=style,
                     width=width,
                     height=height,
+                    negative_prompt=negative_prompt,
                 )
             )
 

@@ -7,6 +7,10 @@ install:
 	$(PYTHON) -m pip install poetry
 	poetry update
 
+install-global:
+	pip install poetry
+	poetry update
+
 run-web:
 	cd app && $(PYTHON_PRE) -m poetry run python3 web_entrypoint.py
 
