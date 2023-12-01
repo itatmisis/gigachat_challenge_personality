@@ -21,7 +21,9 @@ class TestIntegration:
 
     def test_kandinsky_save_ok(self, combat_container: Container):
         imgs = combat_container.kandinsky_supplier.generate_and_wait(
-            "SCP173", style="ANIME"
+            "Girl with bear",
+            style="ANIME",
+            images=3,
         )
         for idx, img in enumerate(imgs):
             combat_container.kandinsky_supplier.save(img, f"data/tests/{idx}.png")

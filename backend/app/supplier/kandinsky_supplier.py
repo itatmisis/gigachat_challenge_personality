@@ -32,13 +32,12 @@ class KandinskySupplier:
         self,
         prompt: str,
         style: str | None = None,
-        images: int = 1,
         width: int = 1024,
         height: int = 1024,
     ) -> uuid.UUID:
         params = {
             "type": "GENERATE",
-            "numImages": images,
+            "numImages": 1,
             "width": width,
             "height": height,
             "generateParams": {"query": f"{prompt}"},
@@ -62,14 +61,14 @@ class KandinskySupplier:
 
     def wait_generation(
         self, request_id: uuid.UUID, attempts: int = 10, delay: int = 10
-    ) -> list[bytes] | None:
+    ) -> bytes | None:
         while attempts > 0:
             response = self.session.get(
                 self._url + "/key/api/v1/text2image/status/" + str(request_id),
             )
             data = response.json()
             if data["status"] == "DONE":
-                return [img.encode() for img in data["images"]]
+                return [img.encode() for img in data["images"]][0]
 
             attempts -= 1
             time.sleep(delay)
@@ -84,10 +83,22 @@ class KandinskySupplier:
         width: int = 1024,
         height: int = 1024,
     ) -> list[bytes] | None:
-        id_ = self.generate(
-            prompt=prompt, style=style, images=images, width=width, height=height
-        )
-        return self.wait_generation(id_)
+        idxs = []
+        for _ in range(images):
+            idxs.append(
+                self.generate(
+                    prompt=prompt,
+                    style=style,
+                    width=width,
+                    height=height,
+                )
+            )
+
+        images_bytes = []
+        for idx in idxs:
+            images_bytes.append(self.wait_generation(idx))
+
+        return images_bytes
 
     def save(self, img: bytes, path: str | Path) -> None:
         with open(path, "wb") as fh:  # noqa: SCS109
