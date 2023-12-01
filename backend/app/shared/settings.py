@@ -18,6 +18,9 @@ class AppSettings(BaseSettings):
     redis_host: str = "localhost"
     redis_port: int = 6379
 
+    kandinsky_api_key: str
+    kandinsky_api_secret: str
+
     model_config = SettingsConfigDict(env_prefix="_", env_file=".env")
 
 
