@@ -11,8 +11,8 @@ class CheckFailed(Exception):
 class HeathService:
     async def check(self) -> None:
         try:
-            ...
+            1 + 1
         except Exception as exc:
-            raise CheckFailed("Check failed for db_repository") from exc
+            raise CheckFailed("Check failed for ...") from exc
         else:
-            logger.info("db_repository check passed")
+            logger.info("... check passed")
