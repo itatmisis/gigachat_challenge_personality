@@ -3,8 +3,7 @@
 backend/app/data/pg
 backend/app/data/redis
 backend/app/data/grafana
-backend/app/data/atms.json
-backend/app/data/offices.json
+backend/app/data/tests
 
 ### SAM BUILD ###
 **/.aws-sam
