@@ -271,7 +271,7 @@ class KandinskySupplier:
     def fetch(self, req: FetchRequest) -> list[FetchResponse]:
         imgs = []
         for id_ in req.ids:
-            img = self.wait_generation(id_, attempts=req.attempts, delay=req.delay)
+            img = self.wait_generation(id_, attempts=5, delay=3)
             if img:
                 imgs.append(FetchResponse(img=img, id=id_))
 

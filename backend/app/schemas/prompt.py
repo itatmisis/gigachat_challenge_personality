@@ -59,8 +59,6 @@ class PromptResponse(CamelizedBaseModel):
 
 class FetchRequest(CamelizedBaseModel):
     ids: list[uuid.UUID] = [uuid.UUID("34418e36-46b9-4ec5-93bf-fd40c0a6a50a")]
-    attempts: int = 3
-    delay: int = 2
 
     model_config = ConfigDict(
         from_attributes=True,
