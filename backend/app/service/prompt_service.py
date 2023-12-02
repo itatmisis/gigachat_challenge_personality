@@ -144,16 +144,17 @@ class PromptService:
                 )
 
     def get_all(self) -> MainPage:
-        max_images = 24
-        map_images_per_pattern = len(name_to_pattern.keys()) // max_images + 1
         images = {}
+        count = 0
         for pattern in name_to_pattern.values():
-            images[pattern.title] = self.redis_repository.get_images_by_pattern(
+            images[pattern.title] = self.redis_repository.get_images_ids_by_pattern(
                 pattern.title
-            )[:map_images_per_pattern]
-            for im in images[pattern.title]:
-                im.img = self.resize_base64_img(im.img, shape=(256, 256))
+            )
+            # for im in images[pattern.title]:
+            #     im.img = self.resize_base64_img(im.img, shape=(256, 256))
+            count += len(images[pattern.title])
 
+        logger.info("images: {}", count)
         return MainPage(images=images)
 
     def gen_all_images_md(self) -> None:
