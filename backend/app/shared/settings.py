@@ -16,6 +16,7 @@ class AppSettings(BaseSettings):
     kandinsky_api_secret: str
     gigachat_credentials: str
     tg_bot_token: str
+    base_path: str = "https://kodiki-hack.ru:8000"
 
     model_config = SettingsConfigDict(env_prefix="_", env_file=".env")
 

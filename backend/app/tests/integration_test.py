@@ -1,3 +1,5 @@
+import uuid
+
 from schemas.prompt import PromptRequest
 from shared.containers import Container
 
@@ -67,4 +69,6 @@ class TestIntegration:
         print(res)
 
     def test_tg_create_stickers_ok(self, combat_container: Container):
-        combat_container.tg_supplier.create_stickers(418878871)
+        combat_container.tg_supplier.create_stickers(
+            418878871, ids=[uuid.UUID("9e61d0bb-3ab7-45a7-afeb-f9b81e64accc")]
+        )
