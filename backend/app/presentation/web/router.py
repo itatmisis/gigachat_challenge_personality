@@ -4,7 +4,6 @@ import uuid
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Query, Response, status
 
-from fastapi_cache.decorator import cache
 from presentation.dependencies import container
 from presentation.web.schemas import HealthResponse, HealthStatuses
 from schemas.prompt import (
@@ -74,7 +73,6 @@ def add_random_patterns(background_tasks: BackgroundTasks) -> None:
 
 
 @router.get("/images/{image_id}")
-@cache(expire=60)
 async def get_image(image_id: uuid.UUID, resize: int | None = Query(None)) -> Response:
     img = container.prompt_service.get_images(image_id, resize=resize)
     if img is None:
