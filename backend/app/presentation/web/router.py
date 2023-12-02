@@ -1,4 +1,5 @@
 import enum
+import uuid
 
 from fastapi import APIRouter
 
@@ -49,3 +50,9 @@ def images_wait(req: FetchRequest) -> list[FetchResponse]:
 @router.get("/images/attributes", response_model=dict[str, list[str]])
 def get_attributes() -> dict[str, list[str]]:
     return _attr_names
+
+
+@router.post("/sets", response_model=uuid.UUID)
+def create_image_set(images: list[str]) -> uuid.UUID:
+    id_ = container.sticker_set_service.put_set(images=images)
+    return id_

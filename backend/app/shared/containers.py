@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from repository.redis_repository import RedisRepository
 from service.heath_service import HeathService
 from service.prompt_service import PromptService
+from service.sticker_set_service import StickerSetService
 from supplier.gigachat_supplier import GigachatSupplier
 from supplier.kandinsky_supplier import KandinskySupplier
 
@@ -13,6 +14,7 @@ class Container:
     kandinsky_supplier: KandinskySupplier
     gigachat_supplier: GigachatSupplier
     prompt_service: PromptService
+    sticker_set_service: StickerSetService
 
 
 def init_combat_container() -> Container:
@@ -25,10 +27,12 @@ def init_combat_container() -> Container:
         kandinsky_supplier=kandinsky_supplier,
         redis_repository=redis_repository,
     )
+    sticker_set_service = StickerSetService(redis_repository=redis_repository)
 
     return Container(
         heath_service=heath_service,
         kandinsky_supplier=kandinsky_supplier,
         gigachat_supplier=gigachat_supplier,
         prompt_service=prompt_service,
+        sticker_set_service=sticker_set_service,
     )

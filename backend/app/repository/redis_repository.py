@@ -2,6 +2,7 @@ import uuid
 from dataclasses import dataclass
 
 import redis
+import ujson
 
 from shared.settings import app_settings
 
@@ -19,3 +20,17 @@ class RedisRepository:
 
     def set_image(self, id_: uuid.UUID, img: bytes) -> None:
         self.r.set(self._make_img_key(id_), value=img)
+
+    def _make_sticker_set_key(self, id_: uuid.UUID) -> str:
+        return f"set::{str(id_)}"
+
+    def get_set(self, id_: uuid.UUID) -> list[str] | None:
+        result = self.r.get(self._make_sticker_set_key(id_))
+        if result is None:
+            return None
+
+        return ujson.loads(result.decode())
+
+    def put_set(self, id_: uuid.UUID, set_: list[str]) -> None:
+        encoded = ujson.dumps(set_)
+        self.r.set(self._make_sticker_set_key(id_), encoded)
