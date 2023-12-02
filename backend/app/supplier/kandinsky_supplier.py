@@ -125,9 +125,9 @@ class KandinskySupplier:
         logger.info("status: kandinsky model got, model: {}", model)
         return model
 
-    def populate_prompt(self, req: PromptRequest) -> None:
+    def populate_prompt(self, req: PromptRequest) -> str:
         if not req.populate_prompt:
-            return
+            return req.prompt
 
         color_style = req.color_style
         if color_style is None:
@@ -141,14 +141,12 @@ class KandinskySupplier:
         if draw_style is None:
             draw_style = random.choice(_draw_styles)
 
-        req.prompt = (
-            f"{req.prompt}, {mood}, {color_style}, {draw_style}, {_sticker_ending}"
-        )
+        return f"{req.prompt}, {mood}, {color_style}, {draw_style}, {_sticker_ending}"
 
     def generate(self, req: PromptRequest) -> PromptResponse:
-        self.populate_prompt(req)
+        populated_prompt = self.populate_prompt(req)
         id_ = self._send_generate_request(
-            prompt=req.prompt,
+            prompt=populated_prompt,
             style=req.style,
             width=req.width,
             height=req.height,
@@ -222,15 +220,15 @@ class KandinskySupplier:
         logger.warning("status: unable to get image, request_id: {}", request_id)
 
     def generate_and_safe(self, req: PromptRequest, count: int = 5) -> None:
-        idxs = []
+        gen_results = []
         for _ in range(count):
-            idxs.append(self.generate(req))
+            gen_results.append(self.generate(req))
 
         images = []
-        for idx, req_id in enumerate(idxs):
-            img = self.wait_generation(req_id)
+        for gen_result in gen_results:
+            img = self.wait_generation(gen_result.id_)
             if img is not None:
-                images.append((img, req.prompts[idx]))
+                images.append((img, gen_result.prompt))
 
         for img, prompt in images:
             with open(  # noqa: SCS109
