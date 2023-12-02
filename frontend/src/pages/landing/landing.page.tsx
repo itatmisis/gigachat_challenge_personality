@@ -5,7 +5,15 @@ import { ControlledStickerCard } from "@/components/sticker/Sticker";
 import cl from "./landing.module.scss";
 import { twMerge } from "tailwind-merge";
 import { FCVM } from "@/utils/fcvm";
-import { Button, Card, CardBody, CardFooter, CardHeader, Divider } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+  Spinner
+} from "@nextui-org/react";
 import ChevronSvg from "@/assets/icons/chevron-down.svg";
 import WandSvg from "@/assets/icons/wand.svg";
 
@@ -17,6 +25,17 @@ export const Row = observer(({ vm, index }: { vm: LandingPageViewModel; index: n
   const otherImagesKey = otherImagesKeys[index];
   if (!otherImagesKey) return null;
   const otherImages = vm.otherImages[otherImagesKey].slice(0, 8);
+  const COLORS = ["linear-gradient(180deg, #0A2E36 0%, #003B4C 100%)", "#32174D", "#124F40"];
+  // if imgSrc is empty retun null
+  if (images.length === 0 || otherImages.length === 0) return null;
+  if (!images[0].imgSrc || !otherImages[0].imgSrc)
+    return (
+      index === 0 && (
+        <div className="flex justify-center items-center w-full h-full">
+          <Spinner size={"lg"} color="primary" />
+        </div>
+      )
+    );
 
   return (
     <div className={twMerge("flex w-full gap-6 mb-6", index % 2 === 0 && "flex-row-reverse")}>
@@ -29,7 +48,10 @@ export const Row = observer(({ vm, index }: { vm: LandingPageViewModel; index: n
           ))}
         </div>
       </div>
-      <Card className="bg-red-200/20">
+      <Card
+        style={{
+          background: COLORS[index % 3]
+        }}>
         <CardBody>
           <div className={twMerge(cl.grid4)}>
             {otherImages.map((v) => (
