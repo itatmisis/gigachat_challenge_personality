@@ -69,8 +69,10 @@ class RedisRepository:
 
         return imgs
 
-    def get_images_ids_by_pattern(self, theme: str) -> list[FetchResponse]:
-        list_ = self.r.lrange(self._make_pattern_key(theme), 0, -1)
+    def get_images_ids_by_pattern(
+        self, theme: str, end: int = -1
+    ) -> list[FetchResponse]:
+        list_ = self.r.lrange(self._make_pattern_key(theme), 0, end)
 
         return [FetchResponse(id=uuid.UUID(img.decode())) for img in list_]
 

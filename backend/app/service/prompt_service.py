@@ -18,7 +18,7 @@ from shared.base import logger
 from shared.settings import app_settings
 from supplier.gigachat_supplier import GigachatSupplier
 from supplier.kandinsky_supplier import KandinskySupplier, _themes
-from supplier.patterns import name_to_pattern
+from supplier.patterns import RANDOM, name_to_pattern
 from supplier.photoroom_supplier import PhotoroomSupplier
 
 
@@ -155,6 +155,24 @@ class PromptService:
             count += len(images[pattern.title])
 
         logger.info("images: {}", count)
+        return MainPage(images=images)
+
+    def get_all_maxed(self, count: int = 24, max_per_pattern: int = 6) -> MainPage:
+        images = {}
+        keys = set(name_to_pattern.keys())
+        keys.discard(RANDOM)
+        any_pattern = random.choice(list(keys))
+
+        images[any_pattern] = self.redis_repository.get_images_ids_by_pattern(
+            any_pattern, end=max_per_pattern - 1
+        )
+        logger.info("fetched: {}, count: {}", any_pattern, len(images[any_pattern]))
+
+        images[RANDOM] = self.redis_repository.get_images_ids_by_pattern(
+            RANDOM, count - len(images[any_pattern]) - 1
+        )
+        logger.info("fetched: {}, count: {}", RANDOM, len(images[RANDOM]))
+
         return MainPage(images=images)
 
     def gen_all_images_md(self) -> None:

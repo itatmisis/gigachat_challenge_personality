@@ -42,6 +42,8 @@ class Pattern:
 #                        mood_list=['Excited', 'Hopefull', 'Blissful', 'Enthusiastic'],
 #                        color_style_list=[],
 #                        draw_style_list=[])
+
+RANDOM = "random"
 _patterns = [
     Pattern(
         title="pink",
