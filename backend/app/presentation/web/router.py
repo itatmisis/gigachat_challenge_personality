@@ -67,6 +67,11 @@ def images_wait(req: FetchRequest) -> list[FetchResponse]:
     return container.prompt_service.fetch_images(req)
 
 
+@router.post("/images/add-random-patterns")
+def add_random_patterns() -> None:
+    return container.prompt_service.generate_for_patterns()
+
+
 @router.get("/images/{image_id}")
 def get_image(image_id: uuid.UUID, resize: int | None = Query(None)) -> Response:
     img = container.prompt_service.get_images(image_id, resize=resize)
