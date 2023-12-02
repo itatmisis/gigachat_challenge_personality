@@ -143,8 +143,9 @@ class PromptService:
     def get_all(self) -> MainPage:
         images = {}
         count = 0
-        max_ = 64
-        patterns = random.choices(list(name_to_pattern.keys()), k=3)
+        max_ = 72
+        # patterns = random.choices(list(name_to_pattern.keys()), k=3)
+        patterns = ["xmas", "skihorise", "crippy"]
 
         for pattern in patterns:
             images[pattern] = self.redis_repository.get_images_ids_by_pattern(
