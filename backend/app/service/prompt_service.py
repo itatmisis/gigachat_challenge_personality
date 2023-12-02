@@ -150,18 +150,35 @@ class PromptService:
         return MainPage(images=images)
 
     def gen_all_images_md(self) -> None:
-        images = self.redis_repository.get_image_all_ids()[:10]
-        cols = 3
+        images = self.redis_repository.get_image_all_ids()
+        cols = 10
         template = """### All generated images\n\n"""
 
+        col = "| "
+        for _ in range(cols):
+            col += "... | "
+        col += "\n"
+        template += col
+
+        col = "| "
+        for _ in range(cols):
+            col += "--- | "
+        template += col
+        col += "\n"
+
         col = ""
+
         for idx, image in enumerate(images):
             if idx % cols == 0:
                 col += "\n"
                 template += col
-                col = "|"
+                col = "| "
 
-            col += f"![{image}]({app_settings.base_path}/images/{image}?reshape=512)|"
+            col += f"![{image}]({app_settings.base_path}/images/{image}?reshape=512) | "
+
+        col += "\n"
+        template += col
+        col = "| "
 
         with open("data/tests/README.md", "w") as f:  # noqa: SCS109
             f.write(template)
