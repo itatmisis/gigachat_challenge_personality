@@ -1,9 +1,12 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { twMerge } from "tailwind-merge";
-import { Checkbox, Skeleton } from "@nextui-org/react";
+import { Skeleton } from "@nextui-org/react";
 import { Sticker } from "../../../pages/main/main.vm";
 import { observer } from "mobx-react-lite";
+import CheckSvg from "@/assets/icons/check.svg";
+import { StickerViewModel } from "./sticker.vm";
+import { useEffect } from "react";
 
 export const DraggableSticker = observer(({ item }: { item: Sticker }) => {
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({
@@ -41,17 +44,38 @@ export const StickerCard = observer(({ item }: { item: Sticker }) => {
   );
 });
 
-export const ControlledStickerCard = observer((x: { item: Sticker }) => {
+export const ControlledStickerCard = observer(
+  ({ vm, readonly }: { vm: StickerViewModel; readonly?: boolean }) => {
+    return (
+      <Skeleton
+        isLoaded={!vm.isLoading}
+        className={twMerge("appear rounded-lg aspect-square", !readonly && "cursor-pointer")}>
+        <div className="flex flex-col items-center justify-center relative">
+          {vm.img && (
+            <img
+              src={`data:image/png;base64,${vm.img}`}
+              alt=""
+              onClick={() => {
+                if (readonly) return;
+                vm.isSelected = !vm.isSelected;
+              }}
+            />
+          )}
+          {!readonly && <CheckMark checked={vm.isSelected} />}
+        </div>
+      </Skeleton>
+    );
+  }
+);
+
+const CheckMark = ({ checked }: { checked: boolean }) => {
   return (
-    <Skeleton isLoaded={!x.item.isLoading} className="rounded-lg">
-      <div className="flex flex-col items-center justify-center w-32 h-32 relative">
-        {x.item.img && <img src={`data:image/png;base64,${x.item.img}`} alt={x.item.prompt} />}
-        <Checkbox
-          className="absolute top-2 left-2"
-          checked={x.item.isSelected}
-          onChange={(v) => (x.item.isSelected = v.target.checked)}
-        />
-      </div>
-    </Skeleton>
+    <div
+      className={twMerge(
+        "absolute top-2 left-2 w-4 h-4 rounded-md flex items-center justify-center bg-black",
+        checked && "bg-primary"
+      )}>
+      {checked && <CheckSvg className="text-white w-3 h-3 pointer-events-none" />}
+    </div>
   );
-});
+};

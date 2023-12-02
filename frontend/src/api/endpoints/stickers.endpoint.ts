@@ -47,3 +47,10 @@ export const fetchPatterns = async () => {
   const { data } = await axios.get("/images/patterns");
   return data as Record<string, Pattern>;
 };
+
+export const fetchAll = async () => {
+  const { data } = await axios.get("/images");
+  return data as {
+    images: Record<string, { id: string; img: string }[]>;
+  };
+};
