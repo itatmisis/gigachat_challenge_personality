@@ -101,6 +101,16 @@ class PromptService:
 
         return imgs
 
+    def resize_base64_img(self, img: bytes, shape: tuple[int, int]) -> bytes:
+        buffer = io.BytesIO()
+        imgdata = base64.b64decode(img)
+        img = Image.open(io.BytesIO(imgdata))
+        new_img = img.resize(shape)
+        new_img.save(buffer, format="PNG")
+        img_b64 = base64.b64encode(buffer.getvalue())
+
+        return img_b64
+
     def get_images(self, img_id: uuid.UUID, resize: int | None = None) -> bytes | None:
         imgs = self.fetch_images(FetchRequest(ids=[img_id]))
         if not imgs:
@@ -108,14 +118,7 @@ class PromptService:
 
         img = imgs[0].img
         if resize is not None:
-            buffer = io.BytesIO()
-            imgdata = base64.b64decode(img)
-            img = Image.open(io.BytesIO(imgdata))
-            new_img = img.resize((resize, resize))
-            new_img.save(buffer, format="PNG")
-            img_b64 = base64.b64encode(buffer.getvalue())
-
-            img = img_b64
+            img = self.resize_base64_img(img, shape=(resize, resize))
 
         return img
 
@@ -146,6 +149,8 @@ class PromptService:
             images[pattern.title] = self.redis_repository.get_images_by_patter(
                 pattern.title
             )
+            for im in images[pattern.title]:
+                im.img = self.resize_base64_img(im.img, shape=(256, 256))
 
         return MainPage(images=images)
 
