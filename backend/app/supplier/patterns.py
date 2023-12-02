@@ -96,6 +96,27 @@ _patterns = [
         color_styles=["Calm Green Colors", "Soft Colors", "Muted Color"],
         draw_styles=["mural art style", "outsider art style", "Digital Art"],
     ),
+    Pattern(
+        title="crippy",
+        description="Новое измерение в формате стикера!",
+        themes=[
+            "galactic voyage",
+            "interdimensional travel",
+            "hyperdimensional entity",
+            "hippy in space",
+        ],
+        moods=[],
+        color_styles=[
+            "Acid",
+            "Trippy",
+            "Bright colours",
+            "Flashing lights",
+            "Vivid",
+            "Rich-coloured",
+            "Flamboyant",
+        ],
+        draw_styles=["Fractal", "Tattoo"],
+    ),
 ]
 
 name_to_pattern: dict[str, Pattern] = {pattern.title: pattern for pattern in _patterns}
