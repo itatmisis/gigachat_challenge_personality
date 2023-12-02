@@ -75,3 +75,10 @@ class TestIntegration:
 
     def test_generate_prompt_ok(self, combat_container: Container):
         combat_container.prompt_service.generate_prompt("Белый флаг")
+
+    def test_generate_images_ok(self, combat_container: Container):
+        combat_container.prompt_service.generate_for_patterns()
+
+    def test_get_all_images_ok(self, combat_container: Container):
+        result = combat_container.prompt_service.get_all()
+        print(result.images.keys())

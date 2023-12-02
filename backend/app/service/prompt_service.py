@@ -9,6 +9,7 @@ from repository.redis_repository import RedisRepository
 from schemas.prompt import (
     FetchRequest,
     FetchResponse,
+    MainPage,
     PromptPatternRequest,
     PromptRequest,
     PromptResponse,
@@ -111,3 +112,33 @@ class PromptService:
             img = img_b64
 
         return img
+
+    def generate_for_patterns(self) -> None:
+        for pattern in name_to_pattern.values():
+            imgs = []
+            if pattern.title == "random":
+                count = 8
+            else:
+                count = 4
+
+            for _ in range(count):
+                imgs.append(
+                    self.generate_image_from_pattern(
+                        PromptPatternRequest(pattern=pattern.title)
+                    ).id_
+                )
+
+            images = self.fetch_images(FetchRequest(ids=imgs))
+            for img in images:
+                self.redis_repository.put_images_by_pattern(
+                    pattern.title, img_id=img.id_
+                )
+
+    def get_all(self) -> MainPage:
+        images = {}
+        for pattern in name_to_pattern.values():
+            images[pattern.title] = self.redis_repository.get_images_by_patter(
+                pattern.title
+            )
+
+        return MainPage(images=images)

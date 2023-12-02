@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import redis
 import ujson
 
+from schemas.prompt import FetchResponse
 from shared.settings import app_settings
 
 
@@ -48,3 +49,20 @@ class RedisRepository:
     def put_theme(self, theme: str, descriptions: list[str]) -> None:
         encoded = ujson.dumps(descriptions)
         self.r.set(self._make_themes_key(theme), encoded)
+
+    def _make_pattern_key(self, pattern: str) -> str:
+        return f"pattern::{pattern}"
+
+    def get_images_by_patter(self, theme: str) -> list[FetchResponse]:
+        list_ = self.r.lrange(self._make_pattern_key(theme), 0, -1)
+        imgs = []
+        for item in list_:
+            id_ = uuid.UUID(item.decode())
+            img = self.get_image(id_)
+            if img is not None:
+                imgs.append(FetchResponse(id=id_, img=img))
+
+        return imgs
+
+    def put_images_by_pattern(self, pattern: str, img_id: uuid.UUID) -> None:
+        self.r.rpush(self._make_pattern_key(pattern), str(img_id))

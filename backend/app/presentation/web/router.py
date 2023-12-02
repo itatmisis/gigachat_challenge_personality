@@ -4,11 +4,13 @@ import uuid
 
 from fastapi import APIRouter, HTTPException, Query, Response, status
 
+from fastapi_cache.decorator import cache
 from presentation.dependencies import container
 from presentation.web.schemas import HealthResponse, HealthStatuses
 from schemas.prompt import (
     FetchRequest,
     FetchResponse,
+    MainPage,
     PromptPatternRequest,
     PromptRequest,
     PromptResponse,
@@ -81,6 +83,12 @@ def get_image(image_id: uuid.UUID, resize: int | None = Query(None)) -> Response
 @router.get("/images/attributes", response_model=dict[str, list[str]])
 def get_attributes() -> dict[str, list[str]]:
     return _attr_names
+
+
+@router.get("/images", response_model=MainPage)
+@cache(expire=60)
+async def get_images() -> MainPage:
+    return container.prompt_service.get_all()
 
 
 @router.post("/sets", response_model=uuid.UUID)
