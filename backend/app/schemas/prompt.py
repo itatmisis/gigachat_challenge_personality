@@ -4,15 +4,6 @@ from pydantic import ConfigDict, Field
 
 from schemas.base import CamelizedBaseModel
 
-_default_negative_prompt = (
-    "lowres, text, error, cropped, worst quality, low quality, "
-    "jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, "
-    "mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, "
-    "dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, "
-    "gross proportions, malformed limbs, missing arms, missing legs, extra arms, "
-    "extra legs, fused fingers, too many fingers, long neck, username, watermark, signature"
-)
-
 
 class Attributes(CamelizedBaseModel):
     style: str | None = None
@@ -26,15 +17,21 @@ class PromptRequest(CamelizedBaseModel):
 
     # https://cdn.fusionbrain.ai/static/styles/api
     # KANDINSKY, UHD, ANIME, DEFAULT
-    width: int = 1024
-    height: int = 1024
-    negative_prompt: str | None = _default_negative_prompt
     populate_prompt: bool = True
     attributes: Attributes = Attributes()
 
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={"examples": [{"prompt": "Аниме девочка и медведь"}]},
+    )
+
+
+class PromptPatternRequest(CamelizedBaseModel):
+    pattern: str = "pink"
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={"examples": [{"pattern": "pink"}]},
     )
 
 

@@ -16,6 +16,7 @@ from schemas.prompt import (
 )
 from shared.base import logger
 from shared.settings import app_settings
+from supplier.patterns import Pattern
 
 _default_negative_prompt = (
     "lowres, text, error, cropped, worst quality, low quality, "
@@ -25,6 +26,18 @@ _default_negative_prompt = (
     "gross proportions, malformed limbs, missing arms, missing legs, extra arms, "
     "extra legs, fused fingers, too many fingers, long neck, username, watermark, signature"
 )
+_themes = [
+    "nature",
+    "city",
+    "car",
+    "girl",
+    "food",
+    "science",
+    "retrowave",
+    "waporwave",
+    "future",
+    "cute animal",
+]
 _moods = [
     "Enthusiastic",
     "Content",
@@ -143,9 +156,42 @@ class KandinskySupplier:
     def get_random_attribute(attr_name: str) -> str:
         return random.choice(_attr_names[attr_name])
 
+    def populate_prompt_from_pattern(
+        self, prompt: str, pattern: Pattern
+    ) -> tuple[str, Attributes]:
+        if pattern.moods:
+            mood = random.choice(pattern.moods)
+        else:
+            mood = self.get_random_attribute("mood")
+
+        if pattern.draw_styles:
+            draw_style = random.choice(pattern.draw_styles)
+        else:
+            draw_style = self.get_random_attribute("draw_style")
+
+        if pattern.styles:
+            style = random.choice(pattern.styles)
+        else:
+            style = self.get_random_attribute("style")
+
+        if pattern.color_styles:
+            color_style = random.choice(pattern.color_styles)
+        else:
+            color_style = self.get_random_attribute("color_style")
+
+        return (
+            f"{prompt}, {mood}, {color_style}, {draw_style}, {_sticker_ending}",
+            Attributes(
+                style=style,
+                mood=mood,
+                color_style=color_style,
+                draw_style=draw_style,
+            ),
+        )
+
     def populate_prompt(self, req: PromptRequest) -> tuple[str, Attributes]:
         if not req.populate_prompt:
-            return req.prompt
+            return req.prompt, req.attributes
 
         color_style = req.attributes.color_style
         if color_style is None:
@@ -179,9 +225,24 @@ class KandinskySupplier:
         id_ = self._send_generate_request(
             prompt=populated_prompt,
             style=req.attributes.style,
-            width=req.width,
-            height=req.height,
-            negative_prompt=req.negative_prompt,
+            width=1024,
+            height=1024,
+            negative_prompt=_default_negative_prompt,
+        )
+
+        return PromptResponse(prompt=populated_prompt, id=id_, attributes=attributes)
+
+    def generate_from_pattern(self, prompt: str, pattern: Pattern) -> PromptResponse:
+        populated_prompt, attributes = self.populate_prompt_from_pattern(
+            prompt, pattern
+        )
+
+        id_ = self._send_generate_request(
+            prompt=populated_prompt,
+            style=attributes.style,
+            width=1024,
+            height=1024,
+            negative_prompt=_default_negative_prompt,
         )
 
         return PromptResponse(prompt=populated_prompt, id=id_, attributes=attributes)

@@ -3,10 +3,17 @@ import uuid
 from dataclasses import dataclass
 
 from repository.redis_repository import RedisRepository
-from schemas.prompt import FetchRequest, FetchResponse, PromptRequest, PromptResponse
+from schemas.prompt import (
+    FetchRequest,
+    FetchResponse,
+    PromptPatternRequest,
+    PromptRequest,
+    PromptResponse,
+)
 from shared.base import logger
 from supplier.gigachat_supplier import GigachatSupplier
-from supplier.kandinsky_supplier import KandinskySupplier
+from supplier.kandinsky_supplier import KandinskySupplier, _themes
+from supplier.patterns import name_to_pattern
 
 
 @dataclass
@@ -48,6 +55,18 @@ class PromptService:
 
         req.prompt = prompt
         return self.kandinsky_supplier.generate(req)
+
+    def generate_image_from_pattern(self, req: PromptPatternRequest) -> PromptResponse:
+        pattern = name_to_pattern[req.pattern]
+
+        if not pattern.themes:
+            theme = random.choice(_themes)
+        else:
+            theme = random.choice(pattern.themes)
+
+        prompt = random.choice(self.generate_prompt(theme))
+
+        return self.kandinsky_supplier.generate_from_pattern(prompt, pattern)
 
     def fetch_images(self, req: FetchRequest) -> list[FetchResponse]:
         imgs = []

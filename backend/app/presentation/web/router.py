@@ -2,13 +2,20 @@ import base64
 import enum
 import uuid
 
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, HTTPException, Query, Response, status
 
 from presentation.dependencies import container
 from presentation.web.schemas import HealthResponse, HealthStatuses
-from schemas.prompt import FetchRequest, FetchResponse, PromptRequest, PromptResponse
+from schemas.prompt import (
+    FetchRequest,
+    FetchResponse,
+    PromptPatternRequest,
+    PromptRequest,
+    PromptResponse,
+)
 from shared.base import logger
 from supplier.kandinsky_supplier import _attr_names
+from supplier.patterns import Pattern, name_to_pattern
 
 router = APIRouter(prefix="")
 
@@ -43,13 +50,23 @@ def generate_image(req: PromptRequest) -> PromptResponse:
     return container.prompt_service.generate_image(req)
 
 
+@router.post("/images/generate-from-pattern", response_model=PromptResponse)
+def generate_image_from_pattern(req: PromptPatternRequest) -> PromptResponse:
+    return container.prompt_service.generate_image_from_pattern(req)
+
+
+@router.get("/images/patterns", response_model=dict[str, Pattern])
+def get_patterns() -> dict[str, Pattern]:
+    return name_to_pattern
+
+
 @router.post("/images/wait", response_model=list[FetchResponse])
 def images_wait(req: FetchRequest) -> list[FetchResponse]:
     return container.prompt_service.fetch_images(req)
 
 
 @router.get("/images/{image_id}")
-def get_image(image_id: uuid.UUID) -> Response:
+def get_image(image_id: uuid.UUID, resize: int | None = Query(...)) -> Response:
     img = container.prompt_service.get_images(image_id)
     if img is None:
         raise HTTPException(
