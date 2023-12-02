@@ -69,14 +69,25 @@ class TgSupplier:
             user_id, text="Твои стикеры для использования в телеграме!"
         )
 
-        grid = self.image_service.make_grip(images_bytes=images, rows=3, cols=4)
-        input_file = InputFile(io.BytesIO(grid))
-        input_file.file_name = "stickers.png"
-        self.bot.send_document(
-            user_id,
-            document=input_file,
-            caption="Стикеры, готовые к печати",
-        )
+        rows, cols = 3, 4
+        batch_step = rows * cols
+        for batch_idx in range(len(images) // batch_step + 1):
+            batch = images[batch_idx * batch_step : (batch_idx + 1) * batch_step]
+            if not batch:
+                continue
+
+            grid = self.image_service.make_grip(
+                images_bytes=batch,
+                rows=rows,
+                cols=cols,
+            )
+            input_file = InputFile(io.BytesIO(grid))
+            input_file.file_name = "stickers.png"
+            self.bot.send_document(
+                user_id,
+                document=input_file,
+                caption="Стикеры, готовые к печати",
+            )
 
     def message_handler(self, message: Message) -> None:
         logger.debug("telegram bot message got: {}", message.text)
