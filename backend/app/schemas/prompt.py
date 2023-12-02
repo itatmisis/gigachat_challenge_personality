@@ -59,3 +59,29 @@ class FetchRequest(CamelizedBaseModel):
 class FetchResponse(CamelizedBaseModel):
     id_: uuid.UUID = Field(..., alias="id")
     img: bytes
+
+
+class MainPage(CamelizedBaseModel):
+    images: dict[str, list[FetchResponse]]
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "random": [
+                        {"id": "34418e36-46b9-4ec5-93bf-fd40c0a6a50a", "img": ""},
+                        {"id": "34418e36-46b9-4ec5-93bf-fd40c0a6a50a", "img": ""},
+                    ],
+                    "pink": [
+                        {"id": "34418e36-46b9-4ec5-93bf-fd40c0a6a50a", "img": ""},
+                        {"id": "34418e36-46b9-4ec5-93bf-fd40c0a6a50a", "img": ""},
+                    ],
+                    "xmas": [
+                        {"id": "34418e36-46b9-4ec5-93bf-fd40c0a6a50a", "img": ""},
+                        {"id": "34418e36-46b9-4ec5-93bf-fd40c0a6a50a", "img": ""},
+                    ],
+                }
+            ]
+        },
+    )

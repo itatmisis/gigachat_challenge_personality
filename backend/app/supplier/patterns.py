@@ -53,7 +53,7 @@ _patterns = [
             "Flashy Pink Colors",
         ],
     ),
-    Pattern(title="empty", description="Полностью случайный паттерн"),
+    Pattern(title="random", description="Полностью случайный паттерн"),
     Pattern(
         title="toy",
         description="Самое время вернуться в детство!",
