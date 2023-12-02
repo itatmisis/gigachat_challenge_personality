@@ -8,6 +8,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        desktop: "1420px",
+      },
       colors: {
         bg: {
           primary: "#000000",
