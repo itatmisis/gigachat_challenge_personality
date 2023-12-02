@@ -1,5 +1,8 @@
+import io
 import uuid
 from dataclasses import dataclass
+
+import requests
 
 import telebot
 from shared.base import logger
@@ -18,13 +21,19 @@ class TgSupplier:
         # ]
         stickers = []
         for id_ in ids:
-            stickers.append(f"{app_settings.base_path}/images/{str(id_)}?resize=512")
-        logger.info("uploading stickers: {}", stickers)
+            res = requests.get(
+                f"{app_settings.base_path}/images/{str(id_)}?resize=512", timeout=3
+            )
+            file_bytes = io.BytesIO(res.content)
+            stickers.append(InputSticker(file_bytes, emoji_list=["👉"]))
 
-        self.bot.create_new_sticker_set(
+        logger.info("uploading stickers: {}", ids)
+
+        ok = self.bot.create_new_sticker_set(
             user_id,
             "stickers_by_ai_generated_stickers_bot",
             "stickers",
-            stickers=[InputSticker(sticker, emoji_list=["👉"]) for sticker in stickers],
+            stickers=stickers,
             sticker_format="static",
         )
+        print(ok)

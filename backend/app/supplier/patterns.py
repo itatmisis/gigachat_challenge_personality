@@ -117,6 +117,13 @@ _patterns = [
         ],
         draw_styles=["Fractal", "Tattoo"],
     ),
+    Pattern(
+        title="skihorise",
+        description="Новый вид КОНЬкобежного спорта!",
+        themes=["horse skating on ice"],
+        moods=["Funny", "Whimsical", "Cute"],
+        draw_styles=["Photorealism"],
+    ),
 ]
 
 name_to_pattern: dict[str, Pattern] = {pattern.title: pattern for pattern in _patterns}
