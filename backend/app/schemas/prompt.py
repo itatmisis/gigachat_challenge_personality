@@ -15,27 +15,28 @@ _default_negative_prompt = (
 
 
 class PromptRequest(CamelizedBaseModel):
-    prompts: list[str] = [
+    prompt: str = (
         "Anime sticker girl with fazbear in left hand and green flag in right hand"
-    ]
+    )
+
     # https://cdn.fusionbrain.ai/static/styles/api
     # KANDINSKY, UHD, ANIME, DEFAULT
     style: str | None = None
     width: int = 1024
     height: int = 1024
     negative_prompt: str | None = _default_negative_prompt
-    sticker: bool = True
+    populate_prompt: bool = True
+    mood: str | None = None
+    color_style: str | None = None
+    draw_style: str | None = None
 
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={
             "examples": [
                 {
-                    "prompt": [
-                        "Anime sticker girl with fazbear in left hand and green flag in right hand"
-                    ],
+                    "prompt": "Anime sticker girl with fazbear in left hand and green flag in right hand",
                     "style": "ANIME",
-                    "images": 1,
                     "width": 1024,
                     "height": 1024,
                     "negative_prompt": negative_prompt,
@@ -44,6 +45,11 @@ class PromptRequest(CamelizedBaseModel):
             ]
         },
     )
+
+
+class PromptResponse(CamelizedBaseModel):
+    id_: uuid.UUID = Field(..., alias="id")
+    prompt: str
 
 
 class FetchRequest(CamelizedBaseModel):

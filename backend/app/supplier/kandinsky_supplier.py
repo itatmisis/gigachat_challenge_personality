@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import requests
 import ujson
 
-from schemas.prompt import FetchRequest, FetchResponse, PromptRequest
+from schemas.prompt import FetchRequest, FetchResponse, PromptRequest, PromptResponse
 from shared.base import logger
 from shared.settings import app_settings
 
@@ -19,7 +19,7 @@ _default_negative_prompt = (
     "gross proportions, malformed limbs, missing arms, missing legs, extra arms, "
     "extra legs, fused fingers, too many fingers, long neck, username, watermark, signature"
 )
-_mood = [
+_moods = [
     "Enthusiastic",
     "Content",
     "Exhilarated",
@@ -38,7 +38,7 @@ _mood = [
     "Joyful",
     "Energetic",
 ]
-_color_style = [
+_color_styles = [
     "Glossy",
     "Bold Colors",
     "Monochrome",
@@ -65,7 +65,7 @@ _color_style = [
     "Neon",
     "Matte",
 ]
-_draw_style = [
+_draw_styles = [
     "art toy style",
     "Minimal",
     "Algorithmic art",
@@ -102,7 +102,7 @@ _draw_style = [
     "Artstation",
     "Pop Art",
 ]
-_sticker_ending = "Contour, Vector, Fully White Background, Detailed"
+_sticker_ending = "Contour, Vector, Fully White Background, Detailed, Sticker"
 
 
 @dataclass
@@ -125,29 +125,37 @@ class KandinskySupplier:
         logger.info("status: kandinsky model got, model: {}", model)
         return model
 
-    def populate_prompt(self, prompt: str) -> str:
-        return (
-            f"{prompt}, realism, cute mood, {random.choice(_color_style)}, "
-            f"{random.choice(_draw_style)}, {_sticker_ending}, Sticker"
+    def populate_prompt(self, req: PromptRequest) -> None:
+        if not req.populate_prompt:
+            return
+
+        color_style = req.color_style
+        if color_style is None:
+            color_style = random.choice(_color_styles)
+
+        mood = req.mood
+        if mood is None:
+            mood = random.choice(_moods)
+
+        draw_style = req.draw_style
+        if draw_style is None:
+            draw_style = random.choice(_draw_styles)
+
+        req.prompt = (
+            f"{req.prompt}, {mood}, {color_style}, {draw_style}, {_sticker_ending}"
         )
 
-    def generate(self, req: PromptRequest) -> list[uuid.UUID]:
-        idxs = []
-        for idx, prompt in enumerate(req.prompts):
-            if req.sticker:
-                req.prompts[idx] = self.populate_prompt(prompt)
+    def generate(self, req: PromptRequest) -> PromptResponse:
+        self.populate_prompt(req)
+        id_ = self._send_generate_request(
+            prompt=req.prompt,
+            style=req.style,
+            width=req.width,
+            height=req.height,
+            negative_prompt=req.negative_prompt,
+        )
 
-            idxs.append(
-                self._send_generate_request(
-                    prompt=req.prompts[idx],
-                    style=req.style,
-                    width=req.width,
-                    height=req.height,
-                    negative_prompt=req.negative_prompt,
-                )
-            )
-
-        return idxs
+        return PromptResponse(prompt=req.prompt, id=id_)
 
     def _send_generate_request(
         self,
@@ -213,8 +221,10 @@ class KandinskySupplier:
             time.sleep(delay)
         logger.warning("status: unable to get image, request_id: {}", request_id)
 
-    def generate_and_safe(self, req: PromptRequest) -> None:
-        idxs = self.generate(req)
+    def generate_and_safe(self, req: PromptRequest, count: int = 5) -> None:
+        idxs = []
+        for _ in range(count):
+            idxs.append(self.generate(req))
 
         images = []
         for idx, req_id in enumerate(idxs):
@@ -224,7 +234,7 @@ class KandinskySupplier:
 
         for img, prompt in images:
             with open(  # noqa: SCS109
-                f"data/tests/{prompt.replace(' ', '-')}-{str(uuid.uuid4())[:8]}.png",
+                f"data/tests/{prompt.replace(' ', '-').lower().replace(',', '')}-{str(uuid.uuid4())[:8]}.png",
                 "wb",
             ) as fh:
                 fh.write(base64.decodebytes(img))
@@ -237,3 +247,6 @@ class KandinskySupplier:
                 imgs.append(FetchResponse(img=img, id=id_))
 
         return imgs
+
+    def mutate(self, req1: PromptRequest, req2: PromptRequest) -> PromptRequest:
+        ...

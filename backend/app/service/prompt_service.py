@@ -1,8 +1,7 @@
-import uuid
 from dataclasses import dataclass
 
 from repository.redis_repository import RedisRepository
-from schemas.prompt import FetchRequest, FetchResponse, PromptRequest
+from schemas.prompt import FetchRequest, FetchResponse, PromptRequest, PromptResponse
 from supplier.gigachat_supplier import GigachatSupplier
 from supplier.kandinsky_supplier import KandinskySupplier
 
@@ -13,7 +12,7 @@ class PromptService:
     gigachat_supplier: GigachatSupplier
     redis_repository: RedisRepository
 
-    def generate_image(self, req: PromptRequest) -> list[uuid.UUID]:
+    def generate_image(self, req: PromptRequest) -> PromptResponse:
         return self.kandinsky_supplier.generate(req)
 
     def fetch_images(self, req: FetchRequest) -> list[FetchResponse]:

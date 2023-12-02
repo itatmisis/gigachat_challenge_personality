@@ -15,20 +15,15 @@ class TestIntegration:
         print(combat_container.kandinsky_supplier.get_model())
 
     def test_kandinsky_save_ok(self, combat_container: Container):
-        imgs = combat_container.kandinsky_supplier.generate_and_safe(
+        combat_container.kandinsky_supplier.generate_and_safe(
             PromptRequest(
-                prompts=["Half-life"] * 9,
+                prompt="Pixilated girl",
                 style="ANIME",
                 width=1024,
                 height=1024,
-                sticker=True,
-            )
+            ),
+            count=5,
         )
-        if imgs is None:
-            return
-
-        for idx, img in enumerate(imgs):
-            combat_container.kandinsky_supplier.save(img, f"data/tests/{idx}.png")
 
     def test_gigachat_ok(self, combat_container: Container):
         res = combat_container.gigachat_supplier.single_message(
