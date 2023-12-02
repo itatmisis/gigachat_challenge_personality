@@ -26,14 +26,20 @@ class PromptService:
             ideas.remove("")
         return ideas
 
-    def generate_prompt(self, prompt: str) -> list[str]:
-        translated = self.gigachat_supplier.translate_to_english(prompt=prompt)
+    def generate_prompt(self, theme: str) -> list[str]:
+        themes = self.redis_repository.get_theme(theme=theme)
+        if themes is not None:
+            return themes
+
+        translated = self.gigachat_supplier.translate_to_english(prompt=theme)
         sticker_ideas = self.parse_bot_response(
             self.gigachat_supplier.single_message(
                 f"Come up with 10 ideas for a drawing on the theme of {translated}"
             )
         )
         logger.info("detailed description generated: {}", sticker_ideas)
+
+        self.redis_repository.put_theme(theme=theme, descriptions=sticker_ideas)
 
         return sticker_ideas
 

@@ -34,3 +34,17 @@ class RedisRepository:
     def put_set(self, id_: uuid.UUID, set_: list[str]) -> None:
         encoded = ujson.dumps(set_)
         self.r.set(self._make_sticker_set_key(id_), encoded)
+
+    def _make_themes_key(self, theme: str) -> str:
+        return f"theme::{str(theme)}"
+
+    def get_theme(self, theme: str) -> list[str] | None:
+        result = self.r.get(self._make_themes_key(theme))
+        if result is None:
+            return None
+
+        return ujson.loads(result.decode())
+
+    def put_theme(self, theme: str, descriptions: list[str]) -> None:
+        encoded = ujson.dumps(descriptions)
+        self.r.set(self._make_themes_key(theme), encoded)

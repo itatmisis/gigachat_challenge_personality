@@ -34,9 +34,7 @@ class PromptRequest(CamelizedBaseModel):
 
     model_config = ConfigDict(
         from_attributes=True,
-        json_schema_extra={
-            "examples": [{"prompt": "Аниме девочка и медведь", "count": 3}]
-        },
+        json_schema_extra={"examples": [{"prompt": "Аниме девочка и медведь"}]},
     )
 
 
