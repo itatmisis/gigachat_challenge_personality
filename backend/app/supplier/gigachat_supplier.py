@@ -38,4 +38,4 @@ class GigachatSupplier:
             m = re.search(r'"[a-zA-Z0-9\W]*".$', prompt)
             prompt = str(m.group(0))
 
-        return prompt
+        return prompt.strip('"')
