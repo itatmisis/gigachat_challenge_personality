@@ -20,6 +20,21 @@ services:
     ports:
       - 8001:8001
 
+  backend_tg:
+    restart: always
+    environment:
+      _REDIS_HOST: "redis"
+    build:
+      context: .
+      dockerfile: DockerfileTG
+    networks:
+      - backend
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - "./app/.env:/backend/app/.env"
+
   redis:
     image: redis:7.2.3-bookworm
     restart: always
