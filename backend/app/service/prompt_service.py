@@ -143,7 +143,7 @@ class PromptService:
     def get_all(self) -> MainPage:
         images = {}
         count = 0
-        max_ = 72
+        max_ = 144
         # patterns = random.choices(list(name_to_pattern.keys()), k=3)
         patterns = ["xmas", "skihorise", "crippy"]
 
