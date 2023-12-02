@@ -80,6 +80,22 @@ _patterns = [
         ],
         moods=["Excited", "Hopefull", "Blissful", "Enthusiastic"],
     ),
+    Pattern(
+        title="frogs",
+        description="Лягушачье запрудье",
+        themes=["water lily", "frog", "pond", "forest", "reed"],
+        moods=[
+            "Content",
+            "Adorable",
+            "Lovely",
+            "Blissful",
+            "Peaceful",
+            "Undisturbed",
+            "Picturesque",
+        ],
+        color_styles=["Calm Green Colors", "Soft Colors", "Muted Color"],
+        draw_styles=["mural art style", "outsider art style", "Digital Art"],
+    ),
 ]
 
 name_to_pattern: dict[str, Pattern] = {pattern.title: pattern for pattern in _patterns}
