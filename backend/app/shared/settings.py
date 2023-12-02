@@ -19,7 +19,7 @@ class AppSettings(BaseSettings):
     photoroom_api_key: str
     base_path: str = "https://kodiki-hack.ru:8000"
 
-    remove_bg: bool = True
+    remove_bg: bool = False
 
     model_config = SettingsConfigDict(env_prefix="_", env_file=".env")
 
