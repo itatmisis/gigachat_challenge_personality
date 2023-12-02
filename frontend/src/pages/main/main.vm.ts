@@ -1,3 +1,4 @@
+import { fetchImages, generateImage } from "api/endpoints/stickers.endpoint";
 import { StickerDto } from "api/models/sticker.model";
 import { makeAutoObservable } from "mobx";
 
@@ -5,6 +6,14 @@ export interface Prompt {
   positive: string;
   negative: string;
   count: number;
+  isLoading?: boolean;
+}
+
+export interface Sticker {
+  id: string;
+  img?: string;
+  isLoading?: boolean;
+  prompt?: string;
 }
 
 export class MainPageViewModel {
@@ -12,37 +21,16 @@ export class MainPageViewModel {
     {
       positive: "",
       negative: "",
-      count: 4
+      count: 2,
+      isLoading: false
     }
   ];
-  public favoriteStickers: StickerDto[] = [
-    {
-      id: "2"
-    },
-    {
-      id: "3"
-    }
-  ];
-  public generatedStickers: StickerDto[] = [
-    {
-      id: "1"
-    },
-    {
-      id: "4"
-    },
-    {
-      id: "5"
-    },
-    {
-      id: "6"
-    }
-  ];
+  public favoriteStickers: Sticker[] = [];
+  public generatedStickers: Sticker[] = [];
 
   get stickers() {
     return [...this.favoriteStickers, ...this.generatedStickers];
   }
-
-  public isGenerating = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -52,7 +40,7 @@ export class MainPageViewModel {
     this.prompts.push({
       positive: "",
       negative: "",
-      count: 4
+      count: 2
     });
   }
 
@@ -60,12 +48,48 @@ export class MainPageViewModel {
     this.prompts.splice(index, 1);
   }
 
-  async generate() {
-    this.isGenerating = true;
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    this.isGenerating = false;
+  async generatePrompt(prompt: Prompt) {
+    prompt.isLoading = true;
+    try {
+      const items = await Promise.all(
+        Array.from({ length: prompt.count }).map(() =>
+          generateImage({
+            prompt: prompt.positive
+          })
+        )
+      );
+
+      items.forEach((item) =>
+        this.generatedStickers.push({
+          id: item.id,
+          prompt: item.prompt,
+          isLoading: true
+        })
+      );
+
+      const interval = setInterval(async () => {
+        const ids = items.map((s) => s.id);
+        const images = await fetchImages(ids);
+
+        images.forEach((image) => {
+          const index = this.generatedStickers.findIndex((s) => s.id === image.id);
+          if (index === -1) return;
+          this.generatedStickers[index].img = image.img;
+          this.generatedStickers[index].isLoading = false;
+        });
+
+        const isLoading = this.generatedStickers.some((s) => s.isLoading);
+        if (!isLoading) {
+          clearInterval(interval);
+          prompt.isLoading = false;
+        }
+      }, 1000);
+    } catch {
+      prompt.isLoading = false;
+    }
   }
 
+  //#region dnd
   moveSticker(overId: string | null, fromId: string) {
     const isFromInFavorite = this.favoriteStickers.some((s) => s.id === fromId);
     let stickerToMove;
@@ -77,6 +101,7 @@ export class MainPageViewModel {
     } else {
       const fromIndex = this.generatedStickers.findIndex((s) => s.id === fromId);
       stickerToMove = this.generatedStickers[fromIndex];
+      if (stickerToMove.isLoading) return;
       this.generatedStickers.splice(fromIndex, 1); // Remove sticker from generated
     }
 
@@ -99,6 +124,7 @@ export class MainPageViewModel {
     const fromIndex = this.generatedStickers.findIndex((s) => s.id === id);
     if (fromIndex === -1) return;
     const stickerToMove = this.generatedStickers[fromIndex];
+    if (stickerToMove.isLoading) return;
     this.generatedStickers.splice(fromIndex, 1); // Remove sticker from generated
     this.favoriteStickers.push(stickerToMove);
   }
@@ -110,4 +136,5 @@ export class MainPageViewModel {
     this.favoriteStickers.splice(fromIndex, 1); // Remove sticker from favorites
     this.generatedStickers.push(stickerToMove);
   }
+  //#endregion
 }

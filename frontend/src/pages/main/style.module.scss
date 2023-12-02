@@ -1,6 +1,6 @@
 .layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 0.7fr 1fr;
     grid-template-rows: 1fr auto;
     grid-template-areas:
         "prompt generated"

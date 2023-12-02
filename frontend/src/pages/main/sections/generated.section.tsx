@@ -19,6 +19,11 @@ export const GeneratedSection: FCVM<MainPageViewModel> = observer(({ vm }) => {
         {vm.generatedStickers.map((item) => (
           <DraggableSticker key={item.id} item={item} />
         ))}
+        {vm.generatedStickers.length === 0 && (
+          <div className="flex flex-col items-center justify-center w-full h-full mt-8">
+            <p className="text-default-500 text-sm">Создайте свой первый стикер в панели слева</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -3,8 +3,11 @@ import { useSortable } from "@dnd-kit/sortable";
 import { StickerDto } from "api/models/sticker.model";
 import { CSS } from "@dnd-kit/utilities";
 import { twMerge } from "tailwind-merge";
+import { Skeleton } from "@nextui-org/react";
+import { Sticker } from "../../pages/main/main.vm";
+import { observer } from "mobx-react-lite";
 
-export const DraggableSticker = ({ item }: { item: StickerDto }) => {
+export const DraggableSticker = observer(({ item }: { item: Sticker }) => {
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({
     id: item.id
   });
@@ -21,15 +24,17 @@ export const DraggableSticker = ({ item }: { item: StickerDto }) => {
       {...attributes}
       {...listeners}
       className={twMerge(isDragging && "brightness-110 z-50")}>
-      <Sticker item={item} />
+      <StickerCard item={item} />
     </div>
   );
-};
-
-export const Sticker = ({ item }: { item: StickerDto }) => {
+});
+// f477575c-4a66-44f4-a6f6-99b305d50d48
+export const StickerCard = observer(({ item }: { item: Sticker }) => {
   return (
-    <div className="flex flex-col items-center justify-center w-32 h-32 rounded-lg bg-white shadow-lg">
-      {item.id}
-    </div>
+    <Skeleton isLoaded={!item.isLoading} className="rounded-lg">
+      <div className="flex flex-col items-center justify-center w-32 h-32">
+        {item.img && <img src={`data:image/png;base64,${item.img}`} alt={item.prompt} />}
+      </div>
+    </Skeleton>
   );
-};
+});

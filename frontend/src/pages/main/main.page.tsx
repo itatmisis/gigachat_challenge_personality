@@ -1,11 +1,11 @@
 import React, { FC, PropsWithChildren, ReactNode, useState } from "react";
 import { GeneratedSection } from "./sections/generated.section";
 import { observer } from "mobx-react-lite";
-import { FavoritesSection } from "./sections/favorites.section";
+import { FavoritesFooter, FavoritesSection } from "./sections/favorites.section";
 import { PromptSection, PromptSectionHeader } from "./sections/prompt.section";
 import { MainPageViewModel } from "./main.vm";
 import cl from "./style.module.scss";
-import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, CardHeader, Divider } from "@nextui-org/react";
 import { twMerge } from "tailwind-merge";
 import { CardHeading } from "@/components/CardHeading";
 import {
@@ -16,18 +16,20 @@ import {
   closestCorners
 } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
-import { Sticker } from "@/components/Sticker";
+import { StickerCard } from "@/components/Sticker";
 
 export const Section = ({
   children,
   className,
   heading,
-  actions
+  actions,
+  footer
 }: {
   children?: ReactNode;
   className?: string;
   heading?: string;
   actions?: ReactNode;
+  footer?: ReactNode;
 }) => {
   return (
     <Card className={twMerge("bg-default-50 rounded-lg shadow-lg h-full", className)}>
@@ -41,6 +43,12 @@ export const Section = ({
         </>
       )}
       <CardBody className="h-full">{children}</CardBody>
+      {footer && (
+        <>
+          <Divider />
+          <CardFooter className="flex justify-between items-center h-[56px]">{footer}</CardFooter>
+        </>
+      )}
     </Card>
   );
 };
@@ -74,7 +82,7 @@ export const MainPage = observer(() => {
     <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
       <DragOverlay>
         {draggedItem && (
-          <Sticker item={vm.stickers.find((item) => item.id.toString() === draggedItem)!} />
+          <StickerCard item={vm.stickers.find((item) => item.id.toString() === draggedItem)!} />
         )}
       </DragOverlay>
       <SortableContext items={vm.stickers} strategy={rectSortingStrategy}>
@@ -87,10 +95,13 @@ export const MainPage = observer(() => {
             <Card />
           </Section>
 
-          <Section className="[grid-area:generated]" heading="Результат">
+          <Section className="[grid-area:generated]" heading="Результаты">
             <GeneratedSection vm={vm} />
           </Section>
-          <Section className="[grid-area:favorites]" heading="">
+          <Section
+            className="[grid-area:favorites]"
+            heading="Выбранные стикеры"
+            footer={<FavoritesFooter vm={vm} />}>
             <FavoritesSection vm={vm} />
           </Section>
         </main>
