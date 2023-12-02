@@ -43,6 +43,7 @@ themes = [
     "birds",
     "corgies",
     "energy",
+    "anime",
 ]
 _moods = [
     "Enthusiastic",
