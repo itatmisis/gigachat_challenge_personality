@@ -9,6 +9,7 @@ import DeleteSvg from "@/assets/icons/delete.svg";
 import WandSvg from "@/assets/icons/wand.svg";
 import { useState } from "react";
 import { PromptCard } from "../components/prompt-card";
+import { twMerge } from "tailwind-merge";
 
 export const PromptSection: FCVM<MainPageViewModel> = observer(({ vm }) => {
   return (
@@ -23,7 +24,8 @@ export const PromptSection: FCVM<MainPageViewModel> = observer(({ vm }) => {
           />
         </div>
       ))}
-      <div className="sticky bottom-0 z-10 min-h-[40px] ml-6">
+      <div
+        className={twMerge("sticky bottom-0 z-10 min-h-[40px]", vm.prompts.length > 0 && "ml-6")}>
         <Button
           startContent={<PlusSvg className="w-5 h-5" />}
           color="primary"

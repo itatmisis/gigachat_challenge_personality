@@ -13,7 +13,10 @@ import {
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
-  closestCorners
+  PointerSensor,
+  closestCorners,
+  useSensor,
+  useSensors
 } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import { StickerCard } from "@/components/Sticker";
@@ -78,8 +81,16 @@ export const MainPage = observer(() => {
     setDraggedItem(event.active.id.toString());
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8
+      }
+    })
+  );
+
   return (
-    <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+    <DndContext sensors={sensors} onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
       <DragOverlay>
         {draggedItem && (
           <StickerCard item={vm.stickers.find((item) => item.id.toString() === draggedItem)!} />

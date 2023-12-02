@@ -23,6 +23,9 @@ export const DraggableSticker = observer(({ item }: { item: Sticker }) => {
       style={style}
       {...attributes}
       {...listeners}
+      onClick={(e) => {
+        console.log("god it");
+      }}
       className={twMerge(isDragging && "brightness-110 z-50")}>
       <StickerCard item={item} />
     </div>
