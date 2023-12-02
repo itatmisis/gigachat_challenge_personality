@@ -1,11 +1,11 @@
+import base64
 import io
 import uuid
 from dataclasses import dataclass
 
-import requests
-
 import telebot
 from repository.redis_repository import RedisRepository
+from service.image_service import ImageService
 from shared.base import logger
 from shared.settings import app_settings
 from telebot.types import InputSticker, Message
@@ -14,6 +14,7 @@ from telebot.types import InputSticker, Message
 @dataclass
 class TgSupplier:
     redis_repository: RedisRepository
+    image_service: ImageService
 
     def __post_init__(self) -> None:
         self.bot = telebot.TeleBot(app_settings.tg_bot_token, parse_mode=None)
@@ -28,25 +29,36 @@ class TgSupplier:
         # ]
         stickers = []
         for id_ in ids:
-            res = requests.get(
-                f"{app_settings.base_path}/images/{str(id_)}?resize=512", timeout=3
+            img_b64 = self.redis_repository.get_image(id_)
+            if img_b64 is None:
+                logger.warning("image not found: {}", img_b64)
+                return
+
+            file_bytes = io.BytesIO(
+                self.image_service.resize_img(
+                    base64.b64decode(img_b64), shape=(512, 512)
+                )
             )
-            file_bytes = io.BytesIO(res.content)
             stickers.append(InputSticker(file_bytes, emoji_list=["😳"]))
 
         logger.info("uploading stickers: {}", ids)
 
         id_ = str(sticker_id)[:8]
         name = f"stickers_{id_}_by_{self.me.username}"
-        ok = self.bot.create_new_sticker_set(
-            user_id,
-            name=name,
-            title=id_,
-            stickers=stickers,
-            sticker_format="static",
-        )
-        if not ok:
-            raise Exception("Not ok(((")
+
+        try:
+            ok = self.bot.create_new_sticker_set(
+                user_id,
+                name=name,
+                title=id_,
+                stickers=stickers,
+                sticker_format="static",
+            )
+        except Exception:
+            logger.exception("unknown error occurred")
+        else:
+            if not ok:
+                raise Exception("Not ok(((")
 
         sticker_set = self.bot.get_sticker_set(name)
 
@@ -75,7 +87,7 @@ class TgSupplier:
             return
 
         self.bot.reply_to(
-            message, text="Начинаю генерацию твоих стикоров, это может занять минуту!"
+            message, text="Начинаю генерацию твоих стикоров, это может занять до минуты"
         )
         self.create_stickers(message.from_user.id, set_id, images)
 

@@ -46,6 +46,18 @@ class Pattern:
 RANDOM = "random"
 _patterns = [
     Pattern(
+        title="xmas",
+        description="Бубенцы, бубенцы - радостно галдят",
+        themes=[
+            "christmas tree",
+            "Santa Claus",
+            "snow",
+            "Christmas decorations",
+            "winter",
+        ],
+        moods=["Excited", "Hopefull", "Blissful", "Enthusiastic"],
+    ),
+    Pattern(
         title="pink",
         description="Цвет настроения - розовый!",
         styles=["Adorable", "Excited", "Lovely", "Cute", "Happy"],
@@ -55,7 +67,6 @@ _patterns = [
             "Flashy Pink Colors",
         ],
     ),
-    Pattern(title="random", description="Полностью случайный паттерн"),
     Pattern(
         title="toy",
         description="Самое время вернуться в детство!",
@@ -69,18 +80,6 @@ _patterns = [
         description="Этот паттерн как кость в горле",
         themes=["skull in spacesuit", "skull", "skeleton"],
         moods=["Creepy", "Angry", "Rude", "Agressive"],
-    ),
-    Pattern(
-        title="xmas",
-        description="Бубенцы, бубенцы - радостно галдят",
-        themes=[
-            "christmas tree",
-            "Santa Claus",
-            "snow",
-            "Christmas decorations",
-            "winter",
-        ],
-        moods=["Excited", "Hopefull", "Blissful", "Enthusiastic"],
     ),
     Pattern(
         title="frogs",
@@ -126,6 +125,7 @@ _patterns = [
         moods=["Funny", "Whimsical", "Cute"],
         draw_styles=["Photorealism"],
     ),
+    Pattern(title="random", description="Полностью случайный паттерн"),
 ]
 
 name_to_pattern: dict[str, Pattern] = {pattern.title: pattern for pattern in _patterns}

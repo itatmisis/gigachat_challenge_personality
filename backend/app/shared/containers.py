@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from repository.redis_repository import RedisRepository
 from service.heath_service import HeathService
+from service.image_service import ImageService
 from service.prompt_service import PromptService
 from service.sticker_set_service import StickerSetService
 from supplier.gigachat_supplier import GigachatSupplier
@@ -26,13 +27,17 @@ def init_combat_container() -> Container:
     redis_repository = RedisRepository()
     gigachat_supplier = GigachatSupplier()
     photoroom_supplier = PhotoroomSupplier()
+    image_service = ImageService()
     prompt_service = PromptService(
         gigachat_supplier=gigachat_supplier,
         kandinsky_supplier=kandinsky_supplier,
         redis_repository=redis_repository,
+        image_service=image_service,
         photoroom_supplier=photoroom_supplier,
     )
-    tg_supplier = TgSupplier(redis_repository=redis_repository)
+    tg_supplier = TgSupplier(
+        redis_repository=redis_repository, image_service=image_service
+    )
     sticker_set_service = StickerSetService(
         redis_repository=redis_repository, tg_supplier=tg_supplier
     )
