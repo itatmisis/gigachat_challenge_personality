@@ -115,9 +115,15 @@ class PromptService:
         for pattern in name_to_pattern.values():
             imgs = []
             if pattern.title == "random":
-                count = 8
+                count = 50
             else:
-                count = 4
+                count = 30
+
+            logger.info(
+                "starting generating images for pattern: {}, count: {}",
+                pattern.title,
+                count,
+            )
 
             for _ in range(count):
                 imgs.append(
@@ -125,6 +131,8 @@ class PromptService:
                         PromptPatternRequest(pattern=pattern.title)
                     ).id_
                 )
+
+            logger.info("fetching images", pattern.title, count)
 
             images = self.fetch_images(FetchRequest(ids=imgs))
             for img in images:
