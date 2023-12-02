@@ -93,7 +93,7 @@ export const SelectedStickers: FCVM<LandingPageViewModel> = observer(({ vm }) =>
       </CardBody>
       <Divider />
       <CardFooter>
-        <Button className="ml-auto" color="secondary">
+        <Button className="ml-auto" color="secondary" onClick={() => vm.navigateConstructor()}>
           <WandSvg className="w-5 h-5" />
           Начать слияние
         </Button>

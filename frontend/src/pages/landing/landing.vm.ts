@@ -42,4 +42,9 @@ export class LandingPageViewModel {
     sticker.isSelected = true;
     this.selectedStickers.push(sticker);
   }
+
+  public navigateConstructor() {
+    const ids = this.selectedStickers.map((v) => v.id);
+    window.location.href = `/constructor?ids=${ids.join(",")}`;
+  }
 }

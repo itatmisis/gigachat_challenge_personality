@@ -57,7 +57,7 @@ export const Section = ({
 };
 
 export const MainPage = observer(() => {
-  const [vm] = useState(() => new MainPageViewModel());
+  const [vm] = useState(() => new MainPageViewModel(new URLSearchParams(window.location.search)));
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
   const handleDragEnd = (event: DragEndEvent) => {

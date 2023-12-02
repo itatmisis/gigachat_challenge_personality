@@ -45,41 +45,44 @@ export class MainPageViewModel {
     return [...this.favoriteStickers, ...this.generatedStickers];
   }
 
-  constructor() {
+  constructor(params: URLSearchParams) {
     makeAutoObservable(this);
-    this.init();
+    this.init(params);
   }
 
-  async init() {
+  async init(params: URLSearchParams) {
     this.stickerPatterns = await fetchPatterns();
     const firstPattern = Object.keys(this.stickerPatterns)[0];
     this.selectedPattern = this.stickerPatterns[firstPattern];
+
+    const ids = params.get("ids");
+    if (!ids) return;
+
+    const stickers = await fetchImages(ids.split(","));
+    this.favoriteStickers = stickers.map((s) => ({
+      id: s.id,
+      img: s.img
+    }));
   }
 
   async generateByPattern() {
     if (!this.selectedPattern) return;
-    this.isLoadingPattern = true;
-    try {
-      const sticker = await generateImageByPattern(this.selectedPattern.title);
-      this.generatedStickers.push({
-        id: sticker.id,
-        prompt: sticker.prompt,
-        isLoading: true
-      });
+    const sticker = await generateImageByPattern(this.selectedPattern.title);
+    this.generatedStickers.push({
+      id: sticker.id,
+      prompt: sticker.prompt,
+      isLoading: true
+    });
 
-      const interval = setInterval(async () => {
-        const images = await fetchImages([sticker.id]);
-        const image = images[0];
-        const index = this.generatedStickers.findIndex((s) => s.id === image.id);
-        if (index === -1) return;
-        this.generatedStickers[index].img = image.img;
-        this.generatedStickers[index].isLoading = false;
-        clearInterval(interval);
-        this.isLoadingPattern = false;
-      }, FETCH_INTERVAL);
-    } catch {
-      this.isLoadingPattern = false;
-    }
+    const interval = setInterval(async () => {
+      const images = await fetchImages([sticker.id]);
+      const image = images[0];
+      const index = this.generatedStickers.findIndex((s) => s.id === image.id);
+      if (index === -1) return;
+      this.generatedStickers[index].img = image.img;
+      this.generatedStickers[index].isLoading = false;
+      clearInterval(interval);
+    }, FETCH_INTERVAL);
   }
 
   addPrompt() {
