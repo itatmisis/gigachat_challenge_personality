@@ -108,6 +108,6 @@ class PromptService:
             new_img.save(buffer, format="PNG")
             img_b64 = base64.b64encode(buffer.getvalue())
 
-            img = img_b64[2:-1]
+            img = img_b64
 
         return img
