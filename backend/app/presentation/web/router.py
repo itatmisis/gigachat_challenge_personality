@@ -91,7 +91,7 @@ def get_attributes() -> dict[str, list[str]]:
     return _attr_names
 
 
-@router.get("/images", response_model=MainPage)
+@router.get("/images", response_model=MainPage, response_model_exclude_none=True)
 @cache(expire=60)
 async def get_images() -> MainPage:
     return container.prompt_service.get_all()

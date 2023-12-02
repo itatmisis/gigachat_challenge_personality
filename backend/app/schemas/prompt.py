@@ -58,7 +58,7 @@ class FetchRequest(CamelizedBaseModel):
 
 class FetchResponse(CamelizedBaseModel):
     id_: uuid.UUID = Field(..., alias="id")
-    img: bytes
+    img: bytes | None = None
 
 
 class MainPage(CamelizedBaseModel):
