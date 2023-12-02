@@ -27,7 +27,7 @@ run-docker-dev:
 	docker compose -f docker-compose.yaml up -d
 
 rebuild-backend:
-	docker compose up -d --build backend_web
+	docker compose up -d --no-deps --build backend_web
 
 jup:
 	. .venv/bin/activate
