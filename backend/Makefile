@@ -18,16 +18,16 @@ run-tg:
 	cd app && $(PYTHON_PRE) -m poetry run python3 tg_bot_entrypoint.py
 
 run-infra:
-	docker compose -f docker-compose.yaml up -d redis
+	docker compose up -d redis
+
+run-docker:
+	docker compose -d
 
 test-integration:
 	cd app && $(PYTHON_PRE) -m pytest -v -s
 
 lint:
 	pre-commit run -a
-
-run-docker-dev:
-	docker compose -f docker-compose.yaml up -d
 
 rebuild-backend:
 	docker compose up -d --no-deps --build backend_web backend_tg
