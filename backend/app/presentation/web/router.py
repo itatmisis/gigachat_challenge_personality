@@ -2,7 +2,7 @@ import base64
 import enum
 import uuid
 
-from fastapi import APIRouter, HTTPException, Query, Response, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Query, Response, status
 
 from fastapi_cache.decorator import cache
 from presentation.dependencies import container
@@ -69,8 +69,8 @@ def images_wait(req: FetchRequest) -> list[FetchResponse]:
 
 
 @router.post("/images/add-random-patterns")
-def add_random_patterns() -> None:
-    return container.prompt_service.generate_for_patterns()
+def add_random_patterns(background_tasks: BackgroundTasks) -> None:
+    background_tasks.add_task(container.prompt_service.generate_for_patterns)
 
 
 @router.get("/images/{image_id}")
