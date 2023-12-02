@@ -38,8 +38,8 @@ async def check_server_health() -> HealthResponse:
     return HealthResponse(status=HealthStatuses.OK)
 
 
-@router.post("/images/generate", response_model=PromptResponse)
-def generate_image(req: PromptRequest) -> PromptResponse:
+@router.post("/images/generate", response_model=list[PromptResponse])
+def generate_image(req: PromptRequest) -> list[PromptResponse]:
     return container.prompt_service.generate_image(req)
 
 

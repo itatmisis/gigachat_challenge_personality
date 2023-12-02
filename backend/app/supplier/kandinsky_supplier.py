@@ -184,7 +184,7 @@ class KandinskySupplier:
             negative_prompt=req.negative_prompt,
         )
 
-        return PromptResponse(prompt=req.prompt, id=id_, attributes=attributes)
+        return PromptResponse(prompt=populated_prompt, id=id_, attributes=attributes)
 
     def _send_generate_request(
         self,

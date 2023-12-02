@@ -33,13 +33,14 @@ class PromptRequest(CamelizedBaseModel):
     negative_prompt: str | None = _default_negative_prompt
     populate_prompt: bool = True
     attributes: Attributes = Attributes()
+    count: int = 10
 
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={
             "examples": [
                 {
-                    "prompt": "Anime sticker girl with fazbear in left hand and green flag in right hand",
+                    "prompt": "Аниме девочка и медведь",
                     "style": "ANIME",
                     "width": 1024,
                     "height": 1024,

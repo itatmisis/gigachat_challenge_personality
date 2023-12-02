@@ -72,3 +72,6 @@ class TestIntegration:
         combat_container.tg_supplier.create_stickers(
             418878871, ids=[uuid.UUID("9e61d0bb-3ab7-45a7-afeb-f9b81e64accc")]
         )
+
+    def test_generate_prompt_ok(self, combat_container: Container):
+        combat_container.prompt_service.generate_prompt("Белый флаг")

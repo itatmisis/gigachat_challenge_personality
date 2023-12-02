@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from repository.redis_repository import RedisRepository
 from schemas.prompt import FetchRequest, FetchResponse, PromptRequest, PromptResponse
+from shared.base import logger
 from supplier.gigachat_supplier import GigachatSupplier
 from supplier.kandinsky_supplier import KandinskySupplier
 
@@ -13,8 +14,37 @@ class PromptService:
     gigachat_supplier: GigachatSupplier
     redis_repository: RedisRepository
 
-    def generate_image(self, req: PromptRequest) -> PromptResponse:
-        return self.kandinsky_supplier.generate(req)
+    def parse_bot_response(self, res: str) -> list[str]:
+        res = res[res.find("1. ") :]
+        ideas = [
+            x.split(". ")[-1] if x.split(". ")[0].isnumeric() else ""
+            for x in res.split("\n")
+        ]
+
+        while "" in ideas:
+            ideas.remove("")
+        return ideas
+
+    def generate_prompt(self, prompt: str) -> list[str]:
+        translated = self.gigachat_supplier.translate_to_english(prompt=prompt)
+        sticker_ideas = [prompt] + self.parse_bot_response(
+            self.gigachat_supplier.single_message(
+                f"Come up with 10 ideas for a drawing on the theme of {translated}"
+            )
+        )
+        logger.info("detailed description generated: {}", sticker_ideas)
+
+        return sticker_ideas
+
+    def generate_image(self, req: PromptRequest) -> list[PromptResponse]:
+        result: list[PromptResponse] = []
+        prompts = self.generate_prompt(req.prompt)[: req.count]
+        for prompt in prompts:
+            req.prompt = prompt
+
+            result.append(self.kandinsky_supplier.generate(req))
+
+        return result
 
     def fetch_images(self, req: FetchRequest) -> list[FetchResponse]:
         imgs = []
