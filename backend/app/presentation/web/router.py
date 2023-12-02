@@ -1,7 +1,8 @@
+import base64
 import enum
 import uuid
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Response, status
 
 from presentation.dependencies import container
 from presentation.web.schemas import HealthResponse, HealthStatuses
@@ -45,6 +46,19 @@ def generate_image(req: PromptRequest) -> PromptResponse:
 @router.post("/images/wait", response_model=list[FetchResponse])
 def images_wait(req: FetchRequest) -> list[FetchResponse]:
     return container.prompt_service.fetch_images(req)
+
+
+@router.get("/images/{image_id}")
+def get_image(image_id: uuid.UUID) -> Response:
+    img = container.prompt_service.get_images(image_id)
+    if img is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Image not found"
+        )
+
+    base64_bytes = base64.b64decode(img)
+
+    return Response(content=base64_bytes, media_type="image/png")
 
 
 @router.get("/images/attributes", response_model=dict[str, list[str]])

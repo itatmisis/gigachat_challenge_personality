@@ -1,3 +1,4 @@
+import uuid
 from dataclasses import dataclass
 
 from repository.redis_repository import RedisRepository
@@ -37,3 +38,10 @@ class PromptService:
             self.redis_repository.set_image(id_=fetched_img.id_, img=fetched_img.img)
 
         return imgs
+
+    def get_images(self, img_id: uuid.UUID) -> bytes | None:
+        imgs = self.fetch_images(FetchRequest(ids=[img_id]))
+        if not imgs:
+            return None
+
+        return imgs[0].img

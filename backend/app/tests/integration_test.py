@@ -65,3 +65,6 @@ class TestIntegration:
             "Привет, как дела?",
         )
         print(res)
+
+    def test_tg_create_stickers_ok(self, combat_container: Container):
+        combat_container.tg_supplier.create_stickers(418878871)

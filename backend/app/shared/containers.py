@@ -6,6 +6,7 @@ from service.prompt_service import PromptService
 from service.sticker_set_service import StickerSetService
 from supplier.gigachat_supplier import GigachatSupplier
 from supplier.kandinsky_supplier import KandinskySupplier
+from supplier.tg_supplier import TgSupplier
 
 
 @dataclass
@@ -15,6 +16,7 @@ class Container:
     gigachat_supplier: GigachatSupplier
     prompt_service: PromptService
     sticker_set_service: StickerSetService
+    tg_supplier: TgSupplier
 
 
 def init_combat_container() -> Container:
@@ -28,6 +30,7 @@ def init_combat_container() -> Container:
         redis_repository=redis_repository,
     )
     sticker_set_service = StickerSetService(redis_repository=redis_repository)
+    tg_supplier = TgSupplier()
 
     return Container(
         heath_service=heath_service,
@@ -35,4 +38,5 @@ def init_combat_container() -> Container:
         gigachat_supplier=gigachat_supplier,
         prompt_service=prompt_service,
         sticker_set_service=sticker_set_service,
+        tg_supplier=tg_supplier,
     )
