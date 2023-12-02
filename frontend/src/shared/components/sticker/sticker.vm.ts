@@ -4,6 +4,7 @@ import { makeAutoObservable } from "mobx";
 export class StickerViewModel {
   public isLoading = true;
   public isSelected = false;
+  public imgSrc: string | null = null;
 
   constructor(
     public id: string,
@@ -18,8 +19,9 @@ export class StickerViewModel {
   }
 
   async init() {
-    const img = await fetchImage(this.id);
-    this.img = img as string;
+    const imgSrc = await fetchImage(this.id);
+    this.imgSrc = imgSrc;
+    this.isLoading = false;
   }
 
   dispose() {}

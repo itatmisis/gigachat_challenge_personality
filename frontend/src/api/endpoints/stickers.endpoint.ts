@@ -31,14 +31,8 @@ export const fetchImages = async (ids: string[]) => {
 
 export const fetchImage = async (id: string) => {
   const res = await axios.get(`/images/${id}`, { responseType: "blob" });
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      resolve(reader.result);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(res.data);
-  });
+  const blob = res.data as Blob;
+  return URL.createObjectURL(blob);
 };
 
 export type Pattern = { title: string; description: string };
@@ -53,4 +47,12 @@ export const fetchAll = async () => {
   return data as {
     images: Record<string, { id: string; img: string }[]>;
   };
+};
+
+export const createImageSet = async (ids: string[]) => {
+  const { data } = await axios.post("/images/set", ids);
+  return data as {
+    id: string;
+    link: string;
+  }[];
 };

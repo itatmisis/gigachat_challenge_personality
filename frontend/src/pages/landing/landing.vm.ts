@@ -4,8 +4,9 @@ import { fetchAll } from "api/endpoints/stickers.endpoint";
 import { StickerViewModel } from "@/components/sticker/sticker.vm";
 
 export class LandingPageViewModel {
-  public selectedStickers: Sticker[] = [];
+  public selectedStickers: StickerViewModel[] = [];
   public images: StickerViewModel[] = [];
+  public otherImages: Record<string, StickerViewModel[]> = {};
 
   constructor() {
     makeAutoObservable(this);
@@ -21,9 +22,24 @@ export class LandingPageViewModel {
         this.images.push(new StickerViewModel(v.id, v.img));
       });
     }
+
+    const keys = Object.keys(res.images);
+    keys.splice(keys.indexOf("random"), 1);
+    keys.map((key) => {
+      const arr = res.images[key];
+      this.otherImages[key] = arr.map((v) => {
+        return new StickerViewModel(v.id, v.img);
+      });
+    });
   }
 
-  public addSticker(sticker: Sticker) {
+  public addSticker(sticker: StickerViewModel) {
+    if (sticker.isSelected) {
+      sticker.isSelected = false;
+      this.selectedStickers.splice(this.selectedStickers.indexOf(sticker), 1);
+      return;
+    }
+    sticker.isSelected = true;
     this.selectedStickers.push(sticker);
   }
 }

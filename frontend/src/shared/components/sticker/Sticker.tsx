@@ -45,22 +45,39 @@ export const StickerCard = observer(({ item }: { item: Sticker }) => {
 });
 
 export const ControlledStickerCard = observer(
-  ({ vm, readonly }: { vm: StickerViewModel; readonly?: boolean }) => {
+  ({
+    vm,
+    readonly,
+    onClick
+  }: {
+    vm: StickerViewModel;
+    readonly?: boolean;
+    onClick?: () => void;
+  }) => {
     return (
       <Skeleton
         isLoaded={!vm.isLoading}
-        className={twMerge("appear rounded-lg aspect-square", !readonly && "cursor-pointer")}>
+        className={twMerge(
+          "appear rounded-lg aspect-square transition-all",
+          !readonly && "cursor-pointer",
+          vm.isSelected && "scale-95"
+        )}>
         <div className="flex flex-col items-center justify-center relative">
-          {vm.img && (
-            <img
-              src={`data:image/png;base64,${vm.img}`}
-              alt=""
-              onClick={() => {
-                if (readonly) return;
-                vm.isSelected = !vm.isSelected;
-              }}
-            />
-          )}
+          {vm.img ||
+            (vm.imgSrc && (
+              <img
+                src={vm.img ? `data:image/png;base64,${vm.img}` : vm.imgSrc ?? undefined}
+                alt=""
+                onClick={() => {
+                  if (readonly) return;
+                  if (onClick) {
+                    onClick();
+                  } else {
+                    vm.isSelected = !vm.isSelected;
+                  }
+                }}
+              />
+            ))}
           {!readonly && <CheckMark checked={vm.isSelected} />}
         </div>
       </Skeleton>

@@ -9,21 +9,52 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Divider } from "@nextui
 import ChevronSvg from "@/assets/icons/chevron-down.svg";
 import WandSvg from "@/assets/icons/wand.svg";
 
+export const Row = observer(({ vm, index }: { vm: LandingPageViewModel; index: number }) => {
+  // get 6 pictures from vm.images and 4 images from vm.otherImages
+  const imageAmount = 16;
+  const images = vm.images.slice(index * imageAmount, index * imageAmount + imageAmount);
+  const otherImagesKeys = Object.keys(vm.otherImages);
+  const otherImagesKey = otherImagesKeys[index];
+  if (!otherImagesKey) return null;
+  const otherImages = vm.otherImages[otherImagesKey].slice(0, 8);
+
+  return (
+    <div className={twMerge("flex w-full gap-6 mb-6", index % 2 === 0 && "flex-row-reverse")}>
+      <div className="">
+        <div className={twMerge(cl.grid6)}>
+          {images.map((v) => (
+            <div key={v.id} className="h-min">
+              <ControlledStickerCard vm={v} onClick={() => vm.addSticker(v)} />
+            </div>
+          ))}
+        </div>
+      </div>
+      <Card className="bg-red-200/20">
+        <CardBody>
+          <div className={twMerge(cl.grid4)}>
+            {otherImages.map((v) => (
+              <div key={v.id} className="h-min">
+                <ControlledStickerCard vm={v} onClick={() => vm.addSticker(v)} />
+              </div>
+            ))}
+          </div>
+        </CardBody>
+      </Card>
+    </div>
+  );
+});
+
 export const LandingPage = observer(() => {
   const [vm] = useState(() => new LandingPageViewModel());
 
   return (
-    <main className="flex w-full max-w-screen-desktop mx-auto px-4 flex-col h-full overflow-y-scroll relative">
+    <main className="flex w-full max-w-screen-xl mx-auto px-4 flex-col h-full overflow-y-scroll">
       <SelectedStickers vm={vm} />
-      <div className="flex">Вдохновение</div>
-      <div className="h-full overflow-y-auto">
-        <div className={twMerge(cl.grid)}>
-          {vm.images.map((v) => (
-            <div key={v.id} className="h-min">
-              <ControlledStickerCard vm={v} />
-            </div>
-          ))}
-        </div>
+      <div className="flex text-2xl mb-6 mt-4">Вдохновение</div>
+      <div className="h-full overflow-y-auto pb-8">
+        <Row vm={vm} index={0} />
+        <Row vm={vm} index={1} />
+        <Row vm={vm} index={2} />
       </div>
     </main>
   );
@@ -31,7 +62,7 @@ export const LandingPage = observer(() => {
 
 export const SelectedStickers: FCVM<LandingPageViewModel> = observer(({ vm }) => {
   const [hidden, setHidden] = useState(false);
-  const filtered = vm.images.filter((v) => v.isSelected);
+  const filtered = vm.selectedStickers;
 
   return (
     <Card
