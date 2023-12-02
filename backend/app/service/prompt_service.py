@@ -1,3 +1,4 @@
+import random
 import uuid
 from dataclasses import dataclass
 
@@ -27,7 +28,7 @@ class PromptService:
 
     def generate_prompt(self, prompt: str) -> list[str]:
         translated = self.gigachat_supplier.translate_to_english(prompt=prompt)
-        sticker_ideas = [prompt] + self.parse_bot_response(
+        sticker_ideas = self.parse_bot_response(
             self.gigachat_supplier.single_message(
                 f"Come up with 10 ideas for a drawing on the theme of {translated}"
             )
@@ -36,15 +37,11 @@ class PromptService:
 
         return sticker_ideas
 
-    def generate_image(self, req: PromptRequest) -> list[PromptResponse]:
-        result: list[PromptResponse] = []
-        prompts = self.generate_prompt(req.prompt)[: req.count]
-        for prompt in prompts:
-            req.prompt = prompt
+    def generate_image(self, req: PromptRequest) -> PromptResponse:
+        prompt = random.choice(self.generate_prompt(req.prompt))
 
-            result.append(self.kandinsky_supplier.generate(req))
-
-        return result
+        req.prompt = prompt
+        return self.kandinsky_supplier.generate(req)
 
     def fetch_images(self, req: FetchRequest) -> list[FetchResponse]:
         imgs = []

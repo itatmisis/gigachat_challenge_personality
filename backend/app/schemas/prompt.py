@@ -22,9 +22,7 @@ class Attributes(CamelizedBaseModel):
 
 
 class PromptRequest(CamelizedBaseModel):
-    prompt: str = (
-        "Anime sticker girl with fazbear in left hand and green flag in right hand"
-    )
+    prompt: str = "Синий лебедь и медведь"
 
     # https://cdn.fusionbrain.ai/static/styles/api
     # KANDINSKY, UHD, ANIME, DEFAULT
@@ -33,7 +31,6 @@ class PromptRequest(CamelizedBaseModel):
     negative_prompt: str | None = _default_negative_prompt
     populate_prompt: bool = True
     attributes: Attributes = Attributes()
-    count: int = 3
 
     model_config = ConfigDict(
         from_attributes=True,
