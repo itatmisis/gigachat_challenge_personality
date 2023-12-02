@@ -151,7 +151,7 @@ class PromptService:
 
     def gen_all_images_md(self) -> None:
         images = self.redis_repository.get_image_all_ids()
-        cols = 10
+        cols = 6
         template = """### All generated images\n\n"""
 
         col = "| "
@@ -180,5 +180,5 @@ class PromptService:
         template += col
         col = "| "
 
-        with open("data/tests/README.md", "w") as f:  # noqa: SCS109
+        with open("../../images/README.md", "w") as f:  # noqa: SCS109
             f.write(template)
