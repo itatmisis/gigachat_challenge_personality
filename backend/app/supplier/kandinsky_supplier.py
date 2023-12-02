@@ -7,7 +7,13 @@ from dataclasses import dataclass
 import requests
 import ujson
 
-from schemas.prompt import FetchRequest, FetchResponse, PromptRequest, PromptResponse
+from schemas.prompt import (
+    Attributes,
+    FetchRequest,
+    FetchResponse,
+    PromptRequest,
+    PromptResponse,
+)
 from shared.base import logger
 from shared.settings import app_settings
 
@@ -103,6 +109,14 @@ _draw_styles = [
     "Pop Art",
 ]
 _sticker_ending = "Contour, Vector, Fully White Background, Detailed, Sticker"
+_styles = ["KANDINSKY", "UHD", "ANIME", "DEFAULT"]
+
+_attr_names: dict[str, list[str]] = {
+    "draw_style": _draw_styles,
+    "mood": _moods,
+    "color_style": _color_styles,
+    "style": _styles,
+}
 
 
 @dataclass
@@ -125,35 +139,52 @@ class KandinskySupplier:
         logger.info("status: kandinsky model got, model: {}", model)
         return model
 
-    def populate_prompt(self, req: PromptRequest) -> str:
+    @staticmethod
+    def get_random_attribute(attr_name: str) -> str:
+        return random.choice(_attr_names[attr_name])
+
+    def populate_prompt(self, req: PromptRequest) -> tuple[str, Attributes]:
         if not req.populate_prompt:
             return req.prompt
 
-        color_style = req.color_style
+        color_style = req.attributes.color_style
         if color_style is None:
-            color_style = random.choice(_color_styles)
+            color_style = self.get_random_attribute("color_style")
 
-        mood = req.mood
+        mood = req.attributes.mood
         if mood is None:
-            mood = random.choice(_moods)
+            mood = self.get_random_attribute("mood")
 
-        draw_style = req.draw_style
+        draw_style = req.attributes.draw_style
         if draw_style is None:
-            draw_style = random.choice(_draw_styles)
+            draw_style = self.get_random_attribute("draw_style")
 
-        return f"{req.prompt}, {mood}, {color_style}, {draw_style}, {_sticker_ending}"
+        style = req.attributes.style
+        if style is None:
+            style = self.get_random_attribute("style")
+
+        return (
+            f"{req.prompt}, {mood}, {color_style}, {draw_style}, {_sticker_ending}",
+            Attributes(
+                style=style,
+                mood=mood,
+                color_style=color_style,
+                draw_style=draw_style,
+            ),
+        )
 
     def generate(self, req: PromptRequest) -> PromptResponse:
-        populated_prompt = self.populate_prompt(req)
+        populated_prompt, attributes = self.populate_prompt(req)
+
         id_ = self._send_generate_request(
             prompt=populated_prompt,
-            style=req.style,
+            style=req.attributes.style,
             width=req.width,
             height=req.height,
             negative_prompt=req.negative_prompt,
         )
 
-        return PromptResponse(prompt=req.prompt, id=id_)
+        return PromptResponse(prompt=req.prompt, id=id_, attributes=attributes)
 
     def _send_generate_request(
         self,
@@ -246,5 +277,29 @@ class KandinskySupplier:
 
         return imgs
 
+    def mutate_attr(
+        self, req1: PromptRequest, req2: PromptRequest, attr_name: str
+    ) -> str:
+        rand = random.random()
+        if rand < 0.1:
+            return self.get_random_attribute(attr_name=attr_name)
+        if rand < 0.55:
+            return getattr(req1.attributes, attr_name)
+        return getattr(req2.attributes, attr_name)
+
     def mutate(self, req1: PromptRequest, req2: PromptRequest) -> PromptRequest:
-        ...
+        color_style = self.mutate_attr(req1, req2, "color_style")
+        draw_style = self.mutate_attr(req1, req2, "draw_style")
+        mood = self.mutate_attr(req1, req2, "mood")
+        style = self.mutate_attr(req1, req2, "style")
+        attributes = Attributes(
+            style=style, mood=mood, draw_style=draw_style, color_style=color_style
+        )
+
+        return PromptRequest(
+            prompt=req1.prompt,
+            height=req1.height,
+            width=req1.width,
+            negative_prompt=req1.negative_prompt,
+            attributes=attributes,
+        )

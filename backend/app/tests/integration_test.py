@@ -25,6 +25,35 @@ class TestIntegration:
             count=5,
         )
 
+    def test_kandinsky_mutate_ok(self, combat_container: Container):
+        _, a = combat_container.kandinsky_supplier.populate_prompt(
+            PromptRequest(
+                prompt="Pixilated girl",
+                width=1024,
+                height=1024,
+            )
+        )
+        print(a.jsonable_encoder())
+
+        _, b = combat_container.kandinsky_supplier.populate_prompt(
+            PromptRequest(
+                prompt="Pixilated girl",
+                width=1024,
+                height=1024,
+            )
+        )
+        print(b.jsonable_encoder())
+
+        res = combat_container.kandinsky_supplier.mutate(
+            PromptRequest(
+                prompt="Pixilated girl", width=1024, height=1024, attributes=a
+            ),
+            PromptRequest(
+                prompt="Pixilated girl", width=1024, height=1024, attributes=b
+            ),
+        )
+        print(res.attributes.jsonable_encoder())
+
     def test_gigachat_ok(self, combat_container: Container):
         res = combat_container.gigachat_supplier.single_message(
             "Сделай пропт для кандинского для классного аниме стикера",
