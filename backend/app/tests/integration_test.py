@@ -92,3 +92,6 @@ class TestIntegration:
         assert img is not None
 
         combat_container.prompt_service.photoroom_supplier.remove_bg(img)
+
+    def test_gen_images_ok(self, combat_container: Container):
+        print(combat_container.prompt_service.gen_all_images_md())

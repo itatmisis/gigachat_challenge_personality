@@ -148,3 +148,14 @@ class PromptService:
             )
 
         return MainPage(images=images)
+
+    def gen_all_images_md(self) -> None:
+        images = self.redis_repository.get_image_all_ids()
+        template = """### All generated images\n\n"""
+        for image in images:
+            template += (
+                f"![{image}]({app_settings.base_path}/images/{image}?reshape=512)<br>\n"
+            )
+
+        with open("data/tests/README.md", "w") as f:  # noqa: SCS109
+            f.write(template)

@@ -19,6 +19,11 @@ class RedisRepository:
     def get_image(self, id_: uuid.UUID) -> bytes | None:
         return self.r.get(self._make_img_key(id_))
 
+    def get_image_all_ids(self) -> list[uuid.UUID]:
+        return [
+            uuid.UUID(key.decode().split("::")[1]) for key in self.r.keys("image::*")
+        ]
+
     def set_image(self, id_: uuid.UUID, img: bytes) -> None:
         self.r.set(self._make_img_key(id_), value=img)
 
