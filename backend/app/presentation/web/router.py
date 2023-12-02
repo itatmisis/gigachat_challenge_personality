@@ -15,6 +15,7 @@ from schemas.prompt import (
     PromptRequest,
     PromptResponse,
 )
+from schemas.set import SetResponse
 from shared.base import logger
 from supplier.kandinsky_supplier import _attr_names
 from supplier.patterns import Pattern, name_to_pattern
@@ -96,7 +97,7 @@ async def get_images() -> MainPage:
     return container.prompt_service.get_all()
 
 
-@router.post("/sets", response_model=uuid.UUID)
-def create_image_set(images: list[str]) -> uuid.UUID:
-    id_ = container.sticker_set_service.put_set(images=images)
-    return id_
+@router.post("/sets", response_model=SetResponse)
+def create_image_set(images: list[str]) -> SetResponse:
+    res = container.sticker_set_service.put_set(images=images)
+    return res

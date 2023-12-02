@@ -29,8 +29,10 @@ def init_combat_container() -> Container:
         kandinsky_supplier=kandinsky_supplier,
         redis_repository=redis_repository,
     )
-    sticker_set_service = StickerSetService(redis_repository=redis_repository)
     tg_supplier = TgSupplier(redis_repository=redis_repository)
+    sticker_set_service = StickerSetService(
+        redis_repository=redis_repository, tg_supplier=tg_supplier
+    )
 
     return Container(
         heath_service=heath_service,

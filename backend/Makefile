@@ -14,6 +14,9 @@ install-global:
 run-web:
 	cd app && $(PYTHON_PRE) -m poetry run python3 web_entrypoint.py
 
+run-tg:
+	cd app && $(PYTHON_PRE) -m poetry run python3 tg_bot_entrypoint.py
+
 run-infra:
 	docker compose -f docker-compose.yaml up -d redis
 
