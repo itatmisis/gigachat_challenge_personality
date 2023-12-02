@@ -143,17 +143,27 @@ class PromptService:
     def get_all(self) -> MainPage:
         images = {}
         count = 0
-        for pattern in name_to_pattern.values():
-            images[pattern.title] = self.redis_repository.get_images_ids_by_pattern(
-                pattern.title
-            )
-            # for im in images[pattern.title]:
-            #     im.img = self.resize_base64_img(im.img, shape=(256, 256))
-            count += len(images[pattern.title])
+        max_ = 64
+        patterns = random.choices(list(name_to_pattern.keys()), k=3)
 
-        logger.info("images: {}", count)
+        for pattern in patterns:
+            images[pattern] = self.redis_repository.get_images_ids_by_pattern(
+                pattern, count=8
+            )
+            count += len(images[pattern])
+            logger.info("images: {}, pattern: {}", count, pattern)
+
+        random_count = max_ - count - 1
+        if random_count > 0:
+            images[RANDOM] = self.redis_repository.get_images_ids_by_pattern(
+                RANDOM, count=random_count
+            )
+            count += len(images[RANDOM])
+            logger.info("images: {}, pattern: {}", count, RANDOM)
+
         return MainPage(images=images)
 
+    # DEPRECATED
     def get_all_maxed(self, count: int = 24, max_per_pattern: int = 6) -> MainPage:
         images = {}
         keys = set(name_to_pattern.keys())

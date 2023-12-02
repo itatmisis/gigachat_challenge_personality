@@ -1,3 +1,4 @@
+import random
 import uuid
 from dataclasses import dataclass
 
@@ -70,9 +71,17 @@ class RedisRepository:
         return imgs
 
     def get_images_ids_by_pattern(
-        self, theme: str, end: int = -1
+        self, theme: str, count: int = -1
     ) -> list[FetchResponse]:
-        list_ = self.r.lrange(self._make_pattern_key(theme), 0, end)
+        if count == -1:
+            list_ = self.r.lrange(self._make_pattern_key(theme), 0, -1)
+
+            return [FetchResponse(id=uuid.UUID(img.decode())) for img in list_]
+
+        len_ = self.r.llen(self._make_pattern_key(theme))
+        begin = random.randint(0, len_ - count)
+
+        list_ = self.r.lrange(self._make_pattern_key(theme), begin, begin + count)
 
         return [FetchResponse(id=uuid.UUID(img.decode())) for img in list_]
 

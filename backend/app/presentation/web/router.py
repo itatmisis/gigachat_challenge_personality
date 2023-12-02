@@ -74,7 +74,8 @@ def add_random_patterns(background_tasks: BackgroundTasks) -> None:
 
 
 @router.get("/images/{image_id}")
-def get_image(image_id: uuid.UUID, resize: int | None = Query(None)) -> Response:
+@cache(expire=60)
+async def get_image(image_id: uuid.UUID, resize: int | None = Query(None)) -> Response:
     img = container.prompt_service.get_images(image_id, resize=resize)
     if img is None:
         raise HTTPException(
@@ -92,12 +93,8 @@ def get_attributes() -> dict[str, list[str]]:
 
 
 @router.get("/images", response_model=MainPage, response_model_exclude_none=True)
-@cache(expire=60)
-async def get_images(count: int | None = Query(None)) -> MainPage:
-    if count is None:
-        return container.prompt_service.get_all()
-
-    return container.prompt_service.get_all_maxed(count)
+async def get_images() -> MainPage:
+    return container.prompt_service.get_all()
 
 
 @router.post("/sets", response_model=SetResponse)
