@@ -58,7 +58,7 @@ class RedisRepository:
     def _make_pattern_key(self, pattern: str) -> str:
         return f"pattern::{pattern}"
 
-    def get_images_by_patter(self, theme: str) -> list[FetchResponse]:
+    def get_images_by_pattern(self, theme: str) -> list[FetchResponse]:
         list_ = self.r.lrange(self._make_pattern_key(theme), 0, -1)
         imgs = []
         for item in list_:

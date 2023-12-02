@@ -146,11 +146,11 @@ class PromptService:
     def get_all(self) -> MainPage:
         images = {}
         for pattern in name_to_pattern.values():
-            images[pattern.title] = self.redis_repository.get_images_ids_by_pattern(
+            images[pattern.title] = self.redis_repository.get_images_by_pattern(
                 pattern.title
             )
-            # for im in images[pattern.title]:
-            # im.img = self.resize_base64_img(im.img, shape=(256, 256))
+            for im in images[pattern.title]:
+                im.img = self.resize_base64_img(im.img, shape=(256, 256))
 
         return MainPage(images=images)
 
