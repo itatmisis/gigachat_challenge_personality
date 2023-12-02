@@ -23,6 +23,8 @@ export interface Sticker {
   isSelected?: boolean;
 }
 
+const FETCH_INTERVAL = 10000;
+
 export class MainPageViewModel {
   public prompts: Prompt[] = [
     {
@@ -73,7 +75,7 @@ export class MainPageViewModel {
         this.generatedStickers[index].isLoading = false;
         clearInterval(interval);
         this.isLoadingPattern = false;
-      }, 1000);
+      }, FETCH_INTERVAL);
     } catch {
       this.isLoadingPattern = false;
     }
@@ -126,7 +128,7 @@ export class MainPageViewModel {
           clearInterval(interval);
           prompt.isLoading = false;
         }
-      }, 1000);
+      }, FETCH_INTERVAL);
     } catch {
       prompt.isLoading = false;
     }

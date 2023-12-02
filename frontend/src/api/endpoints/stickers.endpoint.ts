@@ -12,7 +12,7 @@ export const generateImage = async (req: StickerReq) => {
 };
 
 export const generateImageByPattern = async (pattern: string) => {
-  const { data } = await axios.post("/images/generate", { pattern: pattern });
+  const { data } = await axios.post("/images/generate-from-pattern", { pattern: pattern });
   return data as {
     id: string;
     prompt: string;

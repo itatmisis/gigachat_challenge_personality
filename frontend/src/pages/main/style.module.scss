@@ -1,7 +1,7 @@
 .layout {
     display: grid;
     grid-template-columns: 0.7fr 1fr;
-    grid-template-rows: 1fr auto;
+    grid-template-rows: 1fr 1fr;
     grid-template-areas:
         "prompt generated"
         "prompt favorites"
