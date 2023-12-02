@@ -84,3 +84,11 @@ class TestIntegration:
     def test_get_all_images_ok(self, combat_container: Container):
         result = combat_container.prompt_service.get_all()
         print(result.images.keys())
+
+    def test_remove_bg_ok(self, combat_container: Container):
+        img = combat_container.prompt_service.get_images(
+            img_id=uuid.UUID("f5b454c9-d3f8-483c-b181-56a063a42b1f")
+        )
+        assert img is not None
+
+        combat_container.prompt_service.photoroom_supplier.remove_bg(img)

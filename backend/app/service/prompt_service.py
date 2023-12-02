@@ -15,9 +15,11 @@ from schemas.prompt import (
     PromptResponse,
 )
 from shared.base import logger
+from shared.settings import app_settings
 from supplier.gigachat_supplier import GigachatSupplier
 from supplier.kandinsky_supplier import KandinskySupplier, _themes
 from supplier.patterns import name_to_pattern
+from supplier.photoroom_supplier import PhotoroomSupplier
 
 
 @dataclass
@@ -25,6 +27,7 @@ class PromptService:
     kandinsky_supplier: KandinskySupplier
     gigachat_supplier: GigachatSupplier
     redis_repository: RedisRepository
+    photoroom_supplier: PhotoroomSupplier
 
     def parse_bot_response(self, res: str) -> list[str]:
         res = res[res.find("1. ") :]
@@ -88,6 +91,9 @@ class PromptService:
 
         req.ids = not_found_ids
         fetched_imgs = self.kandinsky_supplier.fetch(req)
+        if app_settings.remove_bg:
+            for idx, img in enumerate(fetched_imgs):
+                fetched_imgs[idx].img = self.photoroom_supplier.remove_bg(img.img)
 
         for fetched_img in fetched_imgs:
             imgs.append(fetched_img)

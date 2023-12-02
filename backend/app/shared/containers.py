@@ -6,6 +6,7 @@ from service.prompt_service import PromptService
 from service.sticker_set_service import StickerSetService
 from supplier.gigachat_supplier import GigachatSupplier
 from supplier.kandinsky_supplier import KandinskySupplier
+from supplier.photoroom_supplier import PhotoroomSupplier
 from supplier.tg_supplier import TgSupplier
 
 
@@ -24,10 +25,12 @@ def init_combat_container() -> Container:
     kandinsky_supplier = KandinskySupplier()
     redis_repository = RedisRepository()
     gigachat_supplier = GigachatSupplier()
+    photoroom_supplier = PhotoroomSupplier()
     prompt_service = PromptService(
         gigachat_supplier=gigachat_supplier,
         kandinsky_supplier=kandinsky_supplier,
         redis_repository=redis_repository,
+        photoroom_supplier=photoroom_supplier,
     )
     tg_supplier = TgSupplier(redis_repository=redis_repository)
     sticker_set_service = StickerSetService(
