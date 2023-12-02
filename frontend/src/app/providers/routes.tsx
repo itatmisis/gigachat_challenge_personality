@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { MainPage } from "../../pages/main/main.page";
 import { LayoutWithNavbar } from "@/components/Navbar";
+import { LandingPage } from "../../pages/landing/landing.page";
 
 export const routes = createBrowserRouter([
   {
@@ -8,7 +9,11 @@ export const routes = createBrowserRouter([
     element: <LayoutWithNavbar />,
     children: [
       {
-        path: "/",
+        path: "index",
+        element: <LandingPage />
+      },
+      {
+        path: "constructor",
         element: <MainPage />
       }
     ]

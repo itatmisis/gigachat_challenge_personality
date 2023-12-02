@@ -26,7 +26,7 @@ export class MainPageViewModel {
     }
   ];
   public favoriteStickers: Sticker[] = [];
-  public generatedStickers: Sticker[] = [{ id: "test" }];
+  public generatedStickers: Sticker[] = [];
 
   get stickers() {
     return [...this.favoriteStickers, ...this.generatedStickers];

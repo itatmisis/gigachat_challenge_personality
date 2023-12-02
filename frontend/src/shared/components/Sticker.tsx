@@ -23,9 +23,6 @@ export const DraggableSticker = observer(({ item }: { item: Sticker }) => {
       style={style}
       {...attributes}
       {...listeners}
-      onClick={(e) => {
-        console.log("god it");
-      }}
       className={twMerge(isDragging && "brightness-110 z-50")}>
       <StickerCard item={item} />
     </div>
@@ -35,7 +32,11 @@ export const DraggableSticker = observer(({ item }: { item: Sticker }) => {
 export const StickerCard = observer(({ item }: { item: Sticker }) => {
   return (
     <Skeleton isLoaded={!item.isLoading} className="rounded-lg">
-      <div className="flex flex-col items-center justify-center w-32 h-32">
+      <div
+        className="flex flex-col items-center justify-center w-32 h-32"
+        onClick={(e) => {
+          console.log("god it");
+        }}>
         {item.img && <img src={`data:image/png;base64,${item.img}`} alt={item.prompt} />}
       </div>
     </Skeleton>

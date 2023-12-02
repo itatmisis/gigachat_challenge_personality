@@ -1,7 +1,7 @@
 import { StickerReq } from "api/models/sticker.model";
 import axios from "axios";
 
-axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+axios.defaults.baseURL = "https://kodiki-hack.ru:8000/";
 
 export const generateImage = async (req: StickerReq) => {
   const { data } = await axios.post("/images/generate", req);
