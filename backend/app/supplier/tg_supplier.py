@@ -8,7 +8,7 @@ from repository.redis_repository import RedisRepository
 from service.image_service import ImageService
 from shared.base import logger
 from shared.settings import app_settings
-from telebot.types import InputSticker, Message
+from telebot.types import InputFile, InputSticker, Message
 
 
 @dataclass
@@ -28,6 +28,7 @@ class TgSupplier:
         #     "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"
         # ]
         stickers = []
+        images = []
         for id_ in ids:
             img_b64 = self.redis_repository.get_image(id_)
             if img_b64 is None:
@@ -39,6 +40,7 @@ class TgSupplier:
                     base64.b64decode(img_b64), shape=(512, 512)
                 )
             )
+            images.append(file_bytes)
             stickers.append(InputSticker(file_bytes, emoji_list=["😳"]))
 
         logger.info("uploading stickers: {}", ids)
@@ -63,7 +65,16 @@ class TgSupplier:
         sticker_set = self.bot.get_sticker_set(name)
 
         self.bot.send_sticker(user_id, sticker=sticker_set.stickers[0].file_id)
-        self.bot.send_message(user_id, text="Твои стикеры!")
+        self.bot.send_message(
+            user_id, text="Твои стикеры для использования в телеграме!"
+        )
+
+        grid = self.image_service.make_grip(images_bytes=images, rows=3, cols=4)
+        self.bot.send_document(
+            user_id,
+            document=InputFile(io.BytesIO(grid)),
+            caption="Стикеры, готовые к печати",
+        )
 
     def message_handler(self, message: Message) -> None:
         logger.debug("telegram bot message got: {}", message.text)
