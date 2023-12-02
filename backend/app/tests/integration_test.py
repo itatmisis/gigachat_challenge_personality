@@ -59,3 +59,9 @@ class TestIntegration:
             "Сделай пропт для кандинского для классного аниме стикера",
         )
         print(res)
+
+    def test_gigachat_translate_ok(self, combat_container: Container):
+        res = combat_container.gigachat_supplier.translate_to_english(
+            "Привет, как дела?",
+        )
+        print(res)
