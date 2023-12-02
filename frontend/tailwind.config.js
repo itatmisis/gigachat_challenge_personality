@@ -19,5 +19,13 @@ export default {
     },
   },
   darkMode: "dark",
-  plugins: [nextui()],
+  plugins: [nextui({
+    themes: {
+      dark: {
+        colors: {
+          secondary: "#08A652",
+        }
+      }
+    }
+  })],
 };

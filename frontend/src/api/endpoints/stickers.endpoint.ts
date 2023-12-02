@@ -50,9 +50,9 @@ export const fetchAll = async () => {
 };
 
 export const createImageSet = async (ids: string[]) => {
-  const { data } = await axios.post("/images/set", ids);
+  const { data } = await axios.post("/sets", ids);
   return data as {
     id: string;
     link: string;
-  }[];
+  };
 };

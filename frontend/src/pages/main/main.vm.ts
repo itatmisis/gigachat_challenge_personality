@@ -1,5 +1,6 @@
 import {
   Pattern,
+  createImageSet,
   fetchImages,
   fetchPatterns,
   generateImage,
@@ -131,6 +132,20 @@ export class MainPageViewModel {
       }, FETCH_INTERVAL);
     } catch {
       prompt.isLoading = false;
+    }
+  }
+
+  public loadingStickerPack = false;
+
+  async createStickerPack() {
+    this.loadingStickerPack = true;
+    const ids = this.favoriteStickers.map((s) => s.id);
+    try {
+      const items = await createImageSet(ids);
+      const link = items.link;
+      window.open(link, "_blank");
+    } finally {
+      this.loadingStickerPack = false;
     }
   }
 

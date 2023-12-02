@@ -33,7 +33,12 @@ export const FavoritesSection: FCVM<MainPageViewModel> = observer(({ vm }) => {
 export const FavoritesFooter: FCVM<MainPageViewModel> = observer(({ vm }) => {
   return (
     <div className="flex items-center gap-1 ml-auto">
-      <Button size="sm" color="primary" isDisabled={vm.favoriteStickers.length === 0}>
+      <Button
+        size="sm"
+        color="primary"
+        isDisabled={vm.favoriteStickers.length === 0}
+        isLoading={vm.loadingStickerPack}
+        onClick={() => vm.createStickerPack()}>
         Опубликовать
       </Button>
     </div>
