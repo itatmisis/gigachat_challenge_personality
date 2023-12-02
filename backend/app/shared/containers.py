@@ -30,7 +30,7 @@ def init_combat_container() -> Container:
         redis_repository=redis_repository,
     )
     sticker_set_service = StickerSetService(redis_repository=redis_repository)
-    tg_supplier = TgSupplier()
+    tg_supplier = TgSupplier(redis_repository=redis_repository)
 
     return Container(
         heath_service=heath_service,

@@ -25,12 +25,12 @@ class RedisRepository:
     def _make_sticker_set_key(self, id_: uuid.UUID) -> str:
         return f"set::{str(id_)}"
 
-    def get_set(self, id_: uuid.UUID) -> list[str] | None:
+    def get_set(self, id_: uuid.UUID) -> list[uuid.UUID] | None:
         result = self.r.get(self._make_sticker_set_key(id_))
         if result is None:
             return None
 
-        return ujson.loads(result.decode())
+        return [uuid.UUID(item) for item in ujson.loads(result.decode())]
 
     def put_set(self, id_: uuid.UUID, set_: list[str]) -> None:
         encoded = ujson.dumps(set_)
