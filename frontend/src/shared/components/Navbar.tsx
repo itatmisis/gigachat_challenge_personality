@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 const Navbar = () => {
   return (
     <header className="flex flex-col mb-4">
-      <nav className="flex py-2 px-4 gap-3">
+      <nav className="flex py-2 px-4 gap-3 max-w-screen-desktop mx-auto w-full">
         <NavLink
           className={({ isActive }) =>
             twMerge(

@@ -97,7 +97,11 @@ export const MainPage = observer(() => {
         )}
       </DragOverlay>
       <SortableContext items={vm.stickers} strategy={rectSortingStrategy}>
-        <main className={twMerge(cl.layout, "px-4 mb-4 gap-4 h-full overflow-hidden")}>
+        <main
+          className={twMerge(
+            cl.layout,
+            "max-w-screen-desktop mx-auto w-full px-4 mb-4 gap-4 h-full overflow-hidden"
+          )}>
           <Section
             className="[grid-area:prompt]"
             heading="Генерация"

@@ -11,6 +11,14 @@ export const generateImage = async (req: StickerReq) => {
   };
 };
 
+export const generateImageByPattern = async (pattern: string) => {
+  const { data } = await axios.post("/images/generate", { pattern: pattern });
+  return data as {
+    id: string;
+    prompt: string;
+  };
+};
+
 export const fetchImages = async (ids: string[]) => {
   const { data } = await axios.post("/images/wait", {
     ids: ids
@@ -31,4 +39,11 @@ export const fetchImage = async (id: string) => {
     reader.onerror = reject;
     reader.readAsDataURL(res.data);
   });
+};
+
+export type Pattern = { title: string; description: string };
+
+export const fetchPatterns = async () => {
+  const { data } = await axios.get("/images/patterns");
+  return data as Record<string, Pattern>;
 };
