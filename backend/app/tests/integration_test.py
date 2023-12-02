@@ -70,7 +70,7 @@ class TestIntegration:
 
     def test_tg_create_stickers_ok(self, combat_container: Container):
         combat_container.tg_supplier.create_stickers(
-            418878871, ids=[uuid.UUID("9e61d0bb-3ab7-45a7-afeb-f9b81e64accc")]
+            418878871, ids=[uuid.UUID("19c3a34a-f919-4ae5-8b3c-5f4547c887af")]
         )
 
     def test_generate_prompt_ok(self, combat_container: Container):

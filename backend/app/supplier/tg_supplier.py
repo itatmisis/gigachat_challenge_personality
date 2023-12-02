@@ -13,11 +13,12 @@ class TgSupplier:
         self.bot = telebot.TeleBot(app_settings.tg_bot_token, parse_mode=None)
 
     def create_stickers(self, user_id: int, ids: list[uuid.UUID]) -> None:
-        stickers = [
-            "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"
-        ]
-        # for id_ in ids:
-        #     stickers.append(f"{app_settings.base_path}/images/{str(id_)}")
+        # stickers = [
+        #     "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"
+        # ]
+        stickers = []
+        for id_ in ids:
+            stickers.append(f"{app_settings.base_path}/images/{str(id_)}?resize=512")
         logger.info("uploading stickers: {}", stickers)
 
         self.bot.create_new_sticker_set(
