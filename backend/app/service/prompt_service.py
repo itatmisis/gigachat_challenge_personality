@@ -152,7 +152,7 @@ class PromptService:
                 pattern, count=8
             )
             count += len(images[pattern])
-            logger.info("images: {}, pattern: {}", count, pattern)
+            logger.info("images: {}, pattern: {}", len(images[pattern]), pattern)
 
         random_count = max_ - count - 1
         if random_count > 0:
@@ -160,7 +160,7 @@ class PromptService:
                 RANDOM, count=random_count
             )
             count += len(images[RANDOM])
-            logger.info("images: {}, pattern: {}", count, RANDOM)
+            logger.info("images: {}, pattern: {}", len(images[RANDOM]), RANDOM)
 
         return MainPage(images=images)
 
