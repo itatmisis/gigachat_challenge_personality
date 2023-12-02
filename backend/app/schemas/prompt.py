@@ -66,8 +66,6 @@ class FetchRequest(CamelizedBaseModel):
             "examples": [
                 {
                     "ids": ["34418e36-46b9-4ec5-93bf-fd40c0a6a50a"],
-                    "attempts": 3,
-                    "delay": 2,
                 }
             ]
         },

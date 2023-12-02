@@ -6,6 +6,7 @@ from presentation.dependencies import container
 from presentation.web.schemas import HealthResponse, HealthStatuses
 from schemas.prompt import FetchRequest, FetchResponse, PromptRequest, PromptResponse
 from shared.base import logger
+from supplier.kandinsky_supplier import _attr_names
 
 router = APIRouter(prefix="")
 
@@ -43,3 +44,8 @@ def generate_image(req: PromptRequest) -> PromptResponse:
 @router.post("/images/wait", response_model=list[FetchResponse])
 def images_wait(req: FetchRequest) -> list[FetchResponse]:
     return container.prompt_service.fetch_images(req)
+
+
+@router.get("/images/attributes", response_model=dict[str, list[str]])
+def get_attributes() -> dict[str, list[str]]:
+    return _attr_names
