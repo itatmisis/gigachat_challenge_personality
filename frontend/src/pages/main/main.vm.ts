@@ -14,6 +14,7 @@ export interface Sticker {
   img?: string;
   isLoading?: boolean;
   prompt?: string;
+  isSelected?: boolean;
 }
 
 export class MainPageViewModel {

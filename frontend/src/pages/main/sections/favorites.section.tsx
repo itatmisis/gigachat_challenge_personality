@@ -2,7 +2,7 @@ import { FCVM } from "@/utils/fcvm";
 import { observer } from "mobx-react-lite";
 import { MainPageViewModel } from "../main.vm";
 import { useDroppable } from "@dnd-kit/core";
-import { DraggableSticker } from "@/components/Sticker";
+import { DraggableSticker } from "@/components/sticker/Sticker";
 import { arrayMove, rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
 import { twMerge } from "tailwind-merge";
 import { Button } from "@nextui-org/react";

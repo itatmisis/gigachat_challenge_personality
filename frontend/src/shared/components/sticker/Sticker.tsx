@@ -1,10 +1,8 @@
-import { useDraggable } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
-import { StickerDto } from "api/models/sticker.model";
 import { CSS } from "@dnd-kit/utilities";
 import { twMerge } from "tailwind-merge";
-import { Skeleton } from "@nextui-org/react";
-import { Sticker } from "../../pages/main/main.vm";
+import { Checkbox, Skeleton } from "@nextui-org/react";
+import { Sticker } from "../../../pages/main/main.vm";
 import { observer } from "mobx-react-lite";
 
 export const DraggableSticker = observer(({ item }: { item: Sticker }) => {
@@ -28,7 +26,7 @@ export const DraggableSticker = observer(({ item }: { item: Sticker }) => {
     </div>
   );
 });
-// f477575c-4a66-44f4-a6f6-99b305d50d48
+
 export const StickerCard = observer(({ item }: { item: Sticker }) => {
   return (
     <Skeleton isLoaded={!item.isLoading} className="rounded-lg">
@@ -38,6 +36,21 @@ export const StickerCard = observer(({ item }: { item: Sticker }) => {
           console.log("god it");
         }}>
         {item.img && <img src={`data:image/png;base64,${item.img}`} alt={item.prompt} />}
+      </div>
+    </Skeleton>
+  );
+});
+
+export const ControlledStickerCard = observer((x: { item: Sticker }) => {
+  return (
+    <Skeleton isLoaded={!x.item.isLoading} className="rounded-lg">
+      <div className="flex flex-col items-center justify-center w-32 h-32 relative">
+        {x.item.img && <img src={`data:image/png;base64,${x.item.img}`} alt={x.item.prompt} />}
+        <Checkbox
+          className="absolute top-2 left-2"
+          checked={x.item.isSelected}
+          onChange={(v) => (x.item.isSelected = v.target.checked)}
+        />
       </div>
     </Skeleton>
   );

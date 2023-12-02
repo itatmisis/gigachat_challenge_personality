@@ -4,5 +4,6 @@ import { LandingPageViewModel } from "./landing.vm";
 
 export const LandingPage = observer(() => {
   const [vm] = useState(() => new LandingPageViewModel());
-  return <>LandingPage</>;
+
+  return <main className="flex w-full max-w-screen-desktop mx-auto px-4">LandingPage</main>;
 });

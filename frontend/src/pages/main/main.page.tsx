@@ -19,7 +19,7 @@ import {
   useSensors
 } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
-import { StickerCard } from "@/components/Sticker";
+import { StickerCard } from "@/components/sticker/Sticker";
 
 export const Section = ({
   children,
@@ -105,7 +105,6 @@ export const MainPage = observer(() => {
             <PromptSection vm={vm} />
             <Card />
           </Section>
-
           <Section className="[grid-area:generated]" heading="Результаты">
             <GeneratedSection vm={vm} />
           </Section>

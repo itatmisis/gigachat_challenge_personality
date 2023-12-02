@@ -20,3 +20,15 @@ export const fetchImages = async (ids: string[]) => {
     img: string;
   }[];
 };
+
+export const fetchImage = async (id: string) => {
+  const res = await axios.get(`/images/${id}`, { responseType: "blob" });
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(res.data);
+  });
+};

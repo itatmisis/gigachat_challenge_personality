@@ -9,7 +9,7 @@ export const routes = createBrowserRouter([
     element: <LayoutWithNavbar />,
     children: [
       {
-        path: "index",
+        path: "/",
         element: <LandingPage />
       },
       {

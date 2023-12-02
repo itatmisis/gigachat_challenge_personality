@@ -4,7 +4,7 @@ import { nextui } from "@nextui-org/react";
 export default {
   content: [
     "./src/**/*.{html,tsx}",
-    "./node_modules/@nextui-org/theme/dist/components/(button|navbar|skeleton|card|popover|tooltip|spinner|divider|textarea|scroll-shadow|input).js",
+    "./node_modules/@nextui-org/theme/dist/components/(checkbox|button|navbar|skeleton|card|popover|tooltip|spinner|divider|textarea|scroll-shadow|input).js",
   ],
   theme: {
     extend: {
