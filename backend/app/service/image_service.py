@@ -22,15 +22,16 @@ class ImageService:
 
         return buffer.getvalue()
 
-    def _make_grip(
-        self, images_bytes: list[bytes], rows: int = 3, cols: int = 4
-    ) -> bytes:
-        if len(images_bytes) != rows * cols:
+    def make_grip(self, images_bytes: list[bytes], rows: int, cols: int) -> bytes:
+        if len(images_bytes) > rows * cols:
             raise Exception("invalid dimensions")
 
-        images = [Image.open(io.BytesIO(img)) for img in images_bytes]
+        images = []
+        for img in images_bytes:
+            images.append(Image.open(io.BytesIO(img)))
+
         w, h = images[0].size
-        grid = Image.new("RGB", size=(cols * w, rows * h))
+        grid = Image.new("RGB", size=(cols * w, rows * h), color=(255, 255, 255))
 
         for i, img in enumerate(images):
             grid.paste(img, box=(i % cols * w, i // cols * h))

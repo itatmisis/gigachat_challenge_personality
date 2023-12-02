@@ -15,7 +15,7 @@ from service.image_service import ImageService
 from shared.base import logger
 from shared.settings import app_settings
 from supplier.gigachat_supplier import GigachatSupplier
-from supplier.kandinsky_supplier import KandinskySupplier, _themes
+from supplier.kandinsky_supplier import KandinskySupplier, themes
 from supplier.patterns import RANDOM, name_to_pattern
 from supplier.photoroom_supplier import PhotoroomSupplier
 
@@ -66,7 +66,7 @@ class PromptService:
         pattern = name_to_pattern[req.pattern]
 
         if not pattern.themes:
-            theme = random.choice(_themes)
+            theme = random.choice(themes)
         else:
             theme = random.choice(pattern.themes)
 

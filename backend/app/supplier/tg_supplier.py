@@ -8,6 +8,7 @@ from repository.redis_repository import RedisRepository
 from service.image_service import ImageService
 from shared.base import logger
 from shared.settings import app_settings
+from telebot.apihelper import ApiTelegramException
 from telebot.types import InputFile, InputSticker, Message
 
 
@@ -35,13 +36,12 @@ class TgSupplier:
                 logger.warning("image not found: {}", img_b64)
                 return
 
-            file_bytes = io.BytesIO(
-                self.image_service.resize_img(
-                    base64.b64decode(img_b64), shape=(512, 512)
-                )
+            file_bytes = self.image_service.resize_img(
+                base64.b64decode(img_b64), shape=(512, 512)
             )
+
             images.append(file_bytes)
-            stickers.append(InputSticker(file_bytes, emoji_list=["😳"]))
+            stickers.append(InputSticker(io.BytesIO(file_bytes), emoji_list=["😳"]))
 
         logger.info("uploading stickers: {}", ids)
 
@@ -56,8 +56,8 @@ class TgSupplier:
                 stickers=stickers,
                 sticker_format="static",
             )
-        except Exception:
-            logger.exception("unknown error occurred")
+        except ApiTelegramException as exc:
+            logger.warning(f"unknown error occurred: {exc}")
         else:
             if not ok:
                 raise Exception("Not ok(((")
@@ -70,9 +70,11 @@ class TgSupplier:
         )
 
         grid = self.image_service.make_grip(images_bytes=images, rows=3, cols=4)
+        input_file = InputFile(io.BytesIO(grid))
+        input_file.file_name = "stickers.png"
         self.bot.send_document(
             user_id,
-            document=InputFile(io.BytesIO(grid)),
+            document=input_file,
             caption="Стикеры, готовые к печати",
         )
 
@@ -105,4 +107,8 @@ class TgSupplier:
     def start_bot(self) -> None:
         self.bot.register_message_handler(self.message_handler)
 
-        self.bot.polling(non_stop=True)
+        while True:
+            try:
+                self.bot.polling(non_stop=True)
+            except Exception:
+                logger.exception("restarting bot, because of error")

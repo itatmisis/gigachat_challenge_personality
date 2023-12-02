@@ -26,7 +26,7 @@ _default_negative_prompt = (
     "gross proportions, malformed limbs, missing arms, missing legs, extra arms, "
     "extra legs, fused fingers, too many fingers, long neck, username, watermark, signature"
 )
-_themes = [
+themes = [
     "nature",
     "city",
     "car",
@@ -37,6 +37,12 @@ _themes = [
     "waporwave",
     "future",
     "cute animal",
+    "architecture",
+    "russia",
+    "robots",
+    "birds",
+    "corgies",
+    "energy",
 ]
 _moods = [
     "Enthusiastic",

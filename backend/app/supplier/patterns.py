@@ -13,36 +13,6 @@ class Pattern:
     draw_styles: list[str] | None = None
 
 
-# pink_pattern = Pattern(description='Цвет настроения - розовый!',
-#                        theme_list=[],
-#                        mood_list=['Adorable','Excited','Lovely','Cute','Happy'],
-#                        color_style_list=['Bright Pink Colors', 'Colorful Pink Colors', 'Flashy Pink Colors'],
-#                        draw_style_list='')
-
-# random_pattern = Pattern(description='Полностью случайный паттерн.',
-#                        theme_list=[],
-#                        mood_list=[],
-#                        color_style_list=[],
-#                        draw_style_list=[])
-
-# toys_pattern = Pattern(description='Самое время вернуться в детство!',
-#                        theme_list=['toy', 'lego body', 'toy car'],
-#                        mood_list=['Ecstatic', 'Joyful', 'Energetic', 'Content'],
-#                        color_style_list=[],
-#                        draw_style_list=['art toy style', 'lego', 'minecraft', 'roblox', 'pixel art'])
-
-# dota_pattern = Pattern(description='Этот паттерн как кость в горле',
-#                        theme_list=['skull in spacesuit', 'skull', 'skeleton'],
-#                        mood_list=['Creepy', 'Angry', 'Rude', 'Agressive'],
-#                        color_style_list=[],
-#                        draw_style_list=[])
-
-# christmas_pattern = Pattern(description='Бубенцы, бубенцы - радостно галдят',
-#                        theme_list=['christmas tree', 'Santa Claus', 'snow', 'Christmas decorations', 'winter'],
-#                        mood_list=['Excited', 'Hopefull', 'Blissful', 'Enthusiastic'],
-#                        color_style_list=[],
-#                        draw_style_list=[])
-
 RANDOM = "random"
 _patterns = [
     Pattern(
