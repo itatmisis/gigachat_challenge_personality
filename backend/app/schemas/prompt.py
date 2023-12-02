@@ -27,11 +27,11 @@ class PromptRequest(CamelizedBaseModel):
 
 
 class PromptPatternRequest(CamelizedBaseModel):
-    pattern: str = "pink"
+    pattern: str = "random"
 
     model_config = ConfigDict(
         from_attributes=True,
-        json_schema_extra={"examples": [{"pattern": "pink"}]},
+        json_schema_extra={"examples": [{"pattern": "random"}]},
     )
 
 

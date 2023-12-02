@@ -66,8 +66,8 @@ def images_wait(req: FetchRequest) -> list[FetchResponse]:
 
 
 @router.get("/images/{image_id}")
-def get_image(image_id: uuid.UUID, resize: int | None = Query(...)) -> Response:
-    img = container.prompt_service.get_images(image_id)
+def get_image(image_id: uuid.UUID, resize: int | None = Query(None)) -> Response:
+    img = container.prompt_service.get_images(image_id, resize=resize)
     if img is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Image not found"

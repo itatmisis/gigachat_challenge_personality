@@ -1,7 +1,10 @@
+import base64
+import io
 import random
 import uuid
 from dataclasses import dataclass
 
+from PIL import Image
 from repository.redis_repository import RedisRepository
 from schemas.prompt import (
     FetchRequest,
@@ -91,9 +94,20 @@ class PromptService:
 
         return imgs
 
-    def get_images(self, img_id: uuid.UUID) -> bytes | None:
+    def get_images(self, img_id: uuid.UUID, resize: int | None = None) -> bytes | None:
         imgs = self.fetch_images(FetchRequest(ids=[img_id]))
         if not imgs:
             return None
 
-        return imgs[0].img
+        img = imgs[0].img
+        if resize is not None:
+            buffer = io.BytesIO()
+            imgdata = base64.b64decode(img)
+            img = Image.open(io.BytesIO(imgdata))
+            new_img = img.resize((resize, resize))
+            new_img.save(buffer, format="PNG")
+            img_b64 = base64.b64encode(buffer.getvalue())
+
+            img = img_b64[2:-1]
+
+        return img
