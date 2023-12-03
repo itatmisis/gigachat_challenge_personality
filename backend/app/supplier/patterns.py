@@ -110,16 +110,14 @@ _patterns = [
             "Picturesque",
         ],
         color_styles=[
-            "Calm Green Colors",
             "Soft Colors",
             "Sparkly Colors",
-            "Muted Color",
-            "Bright Pink Colors",
         ],
         draw_styles=[
             "Pixel Art",
-            "kinetic art style",
             "Pokemon Card",
+            "Anime Art",
+            "Clip Studio Art",
             "Chibi",
         ],
     ),
