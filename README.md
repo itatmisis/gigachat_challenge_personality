@@ -1,10 +1,13 @@
-StickyVerse
+# StickyVerse
 
 ## Сайт
 ![screenshot](images/screenshot.png)
-[Попробовать!](https://gigachat-challenge-personality.vercel.app/)
-[Сваггер с документаций к REST Api](https://kodiki-hack.ru:8000/rapidoc#get-/images)
-[Примеры результатов](images/README.md)
+[Попробовать!](https://gigachat-challenge-personality.vercel.app/)<br>
+[Сваггер с документаций к REST Api](https://kodiki-hack.ru:8000/rapidoc#get-/images)<br>
+[Примеры результатов](docs/README.md)
+
+### Архитектура решения
+![arch](docs/arch.png)
 
 ### Запуск
 
