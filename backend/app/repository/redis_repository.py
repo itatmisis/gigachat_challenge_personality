@@ -84,7 +84,7 @@ class RedisRepository:
         else:
             begin = random.randint(0, len_ - count - 1)
 
-        list_ = self.r.lrange(self._make_pattern_key(theme), begin, begin + count)
+        list_ = self.r.lrange(self._make_pattern_key(theme), begin, begin + count - 1)
 
         return [FetchResponse(id=uuid.UUID(img.decode())) for img in list_]
 
