@@ -112,7 +112,7 @@ class TgSupplier:
             return
 
         self.bot.reply_to(
-            message, text="Начинаю генерацию твоих стикоров, это может занять до минуты"
+            message, text="Начинаю генерацию твоих стикеров, это может занять до минуты"
         )
         self.create_stickers(message.from_user.id, set_id, images)
 
