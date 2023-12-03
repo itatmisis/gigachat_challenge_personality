@@ -95,6 +95,34 @@ _patterns = [
         color_styles=["Calm Green Colors", "Soft Colors", "Muted Color"],
         draw_styles=["mural art style", "outsider art style", "Digital Art"],
     ),
+    Pattern(
+        title="anime",
+        description="Анимешный подход!",
+        themes=["anime", "anime girl", "kawai", "anime hero"],
+        moods=[
+            "Content",
+            "Adorable",
+            "Lovely",
+            "Blissful",
+            "Peaceful",
+            "Undisturbed",
+            "Cute",
+            "Picturesque",
+        ],
+        color_styles=[
+            "Calm Green Colors",
+            "Soft Colors",
+            "Sparkly Colors",
+            "Muted Color",
+            "Bright Pink Colors",
+        ],
+        draw_styles=[
+            "Pixel Art",
+            "kinetic art style",
+            "Pokemon Card",
+            "Chibi",
+        ],
+    ),
     Pattern(title="random", description="Полностью случайный паттерн"),
 ]
 
