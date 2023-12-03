@@ -151,6 +151,7 @@ class PromptService:
             images[pattern] = self.redis_repository.get_images_ids_by_pattern(
                 pattern, count=8
             )
+            random.shuffle(images[pattern])
             count += len(images[pattern])
             logger.info("images: {}, pattern: {}", len(images[pattern]), pattern)
 
@@ -159,6 +160,7 @@ class PromptService:
             images[RANDOM] = self.redis_repository.get_images_ids_by_pattern(
                 RANDOM, count=random_count
             )
+            random.shuffle(images[RANDOM])
             count += len(images[RANDOM])
             logger.info("images: {}, pattern: {}", len(images[RANDOM]), RANDOM)
 
