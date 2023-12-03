@@ -131,6 +131,12 @@ _patterns = [
         draw_styles=["realism", "disney pixar", "pokemon card"],
     ),
     Pattern(
+        title="wizard",
+        description="Ощути себя волшебником!",
+        themes=["wizard", "spellcasting", "potion brewing", "whimsical entity"],
+        moods=["Magical", "Heartwarming", "devious", "Mystical"],
+    ),
+    Pattern(
         title="anime",
         description="Анимешный подход!",
         themes=["anime", "anime girl", "kawai", "anime hero"],
