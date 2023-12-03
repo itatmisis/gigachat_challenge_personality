@@ -39,6 +39,7 @@ class TgSupplier:
             file_bytes = self.image_service.resize_img(
                 base64.b64decode(img_b64), shape=(512, 512)
             )
+            file_bytes = self.image_service.add_corners(im_bytes=file_bytes, rad=50)
 
             images.append(file_bytes)
             stickers.append(InputSticker(io.BytesIO(file_bytes), emoji_list=["😳"]))
