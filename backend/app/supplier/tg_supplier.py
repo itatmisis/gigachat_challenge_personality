@@ -48,12 +48,13 @@ class TgSupplier:
 
         id_ = str(sticker_id)[:8]
         name = f"stickers_{id_}_by_{self.me.username}"
+        title = f"Stickers by @{self.me.username}"
 
         try:
             ok = self.bot.create_new_sticker_set(
                 user_id,
                 name=name,
-                title=id_,
+                title=title,
                 stickers=stickers,
                 sticker_format="static",
             )
