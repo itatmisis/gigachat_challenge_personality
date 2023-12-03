@@ -214,5 +214,5 @@ class PromptService:
         template += col
         col = "| "
 
-        with open("../../images/README.md", "w") as f:  # noqa: SCS109
+        with open("../../docs/README.md", "w") as f:  # noqa: SCS109
             f.write(template)
