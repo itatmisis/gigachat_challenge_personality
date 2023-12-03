@@ -155,7 +155,7 @@ class PromptService:
             count += len(images[pattern])
             logger.info("images: {}, pattern: {}", len(images[pattern]), pattern)
 
-        random_count = max_ - count - 1
+        random_count = max_ - count
         if random_count > 0:
             images[RANDOM] = self.redis_repository.get_images_ids_by_pattern(
                 RANDOM, count=random_count
