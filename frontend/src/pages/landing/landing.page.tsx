@@ -72,7 +72,7 @@ export const LandingPage = observer(() => {
   return (
     <main className="flex w-full max-w-screen-xl mx-auto px-4 flex-col h-full overflow-y-scroll">
       <SelectedStickers vm={vm} />
-      <div className="flex text-2xl mb-6 mt-4">Вдохновение</div>
+      <div className="flex text-2xl mb-6 mt-4">StickyVerse</div>
       <div className="h-full overflow-y-auto pb-8">
         <Row vm={vm} index={0} />
         <Row vm={vm} index={1} />
@@ -117,7 +117,7 @@ export const SelectedStickers: FCVM<LandingPageViewModel> = observer(({ vm }) =>
       <CardFooter>
         <Button className="ml-auto" color="secondary" onClick={() => vm.navigateConstructor()}>
           <WandSvg className="w-5 h-5" />
-          Начать слияние
+          К редактору!
         </Button>
       </CardFooter>
     </Card>

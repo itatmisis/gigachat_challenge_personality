@@ -19,14 +19,14 @@ export const PromptCard = observer(
     const disabled = prompt.isLoading;
 
     return (
-      <div className="flex gap-2 flex-1">
+      <div className="flex gap-2 flex-1 items-center">
         <Card className="bg-default-100 flex-1" shadow="none">
           <CardBody>
             <div className="flex gap-2">
               <div className="flex flex-col gap-2 flex-1">
                 <Textarea
                   isDisabled={disabled}
-                  label="Промпт"
+                  label="Тема стикеров"
                   variant="faded"
                   value={prompt.positive}
                   onChange={(e) => (prompt.positive = e.target.value)}
@@ -40,7 +40,7 @@ export const PromptCard = observer(
                     onChange={(e) => (prompt.negative = e.target.value)}
                   /> */}
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col items-center gap-1">
                 <span className="text-default-500 text-sm">Количество</span>
                 <div className="flex items-center">
                   <Button
@@ -63,24 +63,25 @@ export const PromptCard = observer(
                     <PlusSvg className="w-5 h-5" />
                   </Button>
                 </div>
+                <Tooltip showArrow content="Начать генерацию">
+                  <Button
+                    isLoading={prompt.isLoading}
+                    isDisabled={disabled || prompt.positive.length === 0}
+                    onClick={() => onGenerate()}
+                    isIconOnly
+                    color="secondary"
+                    fullWidth
+                    className="w-full"
+                    variant="ghost">
+                    <WandSvg className="w-5 h-5" />
+                  </Button>
+                </Tooltip>
               </div>
             </div>
             {/* <div className="flex items-center mt-3 mx-2"></div> */}
           </CardBody>
         </Card>
         <div className="flex flex-col gap-1">
-          <Tooltip showArrow content="Начать генерацию">
-            <Button
-              isLoading={prompt.isLoading}
-              isDisabled={disabled || prompt.positive.length === 0}
-              onClick={() => onGenerate()}
-              isIconOnly
-              color="secondary"
-              size="sm"
-              variant="ghost">
-              <WandSvg className="w-5 h-5" />
-            </Button>
-          </Tooltip>
           <Button
             isDisabled={disabled}
             onClick={() => onDelete()}

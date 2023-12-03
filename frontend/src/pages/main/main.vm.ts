@@ -31,7 +31,7 @@ export class MainPageViewModel {
     {
       positive: "",
       negative: "",
-      count: 2,
+      count: 5,
       isLoading: false
     }
   ];
@@ -89,7 +89,7 @@ export class MainPageViewModel {
     this.prompts.push({
       positive: "",
       negative: "",
-      count: 2
+      count: 5
     });
   }
 

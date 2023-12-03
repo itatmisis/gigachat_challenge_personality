@@ -34,21 +34,18 @@ export const PromptSection: FCVM<MainPageViewModel> = observer(({ vm }) => {
         <Tooltip
           isDisabled={vm.isLoadingPattern}
           showArrow
-          content="Нажмите для генерации по паттерну"
+          content="Нажмите для выбора паттерна"
           placement="top-start">
           <ButtonGroup
             variant="solid"
             isDisabled={vm.isLoadingPattern}
             color="secondary"
-            className={twMerge("justify-start w-fit", vm.prompts.length > 0 && "ml-6")}>
-            <Button isLoading={vm.isLoadingPattern} onClick={() => vm.generateByPattern()}>
-              {!vm.isLoadingPattern && <WandSvg className="w-5 h-5" />}
-              {vm.selectedPattern?.description}
-            </Button>
+            className={twMerge("flex justify-start w-full", vm.prompts.length > 0 && "pl-6 pr-12")}>
             <Dropdown placement="bottom-start">
               <DropdownTrigger>
-                <Button isIconOnly>
+                <Button className="w-[100%] flex justify-start ">
                   <ChevronIcon className="w-4 h-4" />
+                  <span className="truncate">{vm.selectedPattern?.description}</span>
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -67,9 +64,21 @@ export const PromptSection: FCVM<MainPageViewModel> = observer(({ vm }) => {
                 ))}
               </DropdownMenu>
             </Dropdown>
+            <Button
+              isLoading={vm.isLoadingPattern}
+              onClick={() => vm.generateByPattern()}
+              variant="ghost"
+              color="secondary"
+              fullWidth
+              className="w-[25%]">
+              {!vm.isLoadingPattern && <WandSvg className="w-5 h-5" />}
+            </Button>
           </ButtonGroup>
         </Tooltip>
       )}
+
+      <p className="text-center text-default-500 text-sm">— или создайте собственные —</p>
+
       <ScrollShadow className="flex flex-col gap-4 flex-1 overflow-auto bottom-inner-shadow pb-4">
         {vm.prompts.map((prompt, index) => (
           <div className="flex gap-2" key={index}>
@@ -88,7 +97,7 @@ export const PromptSection: FCVM<MainPageViewModel> = observer(({ vm }) => {
             color="primary"
             size="sm"
             onClick={() => vm.addPrompt()}>
-            Добавить промпт
+            Добавить тему
           </Button>
         </div>
       </ScrollShadow>

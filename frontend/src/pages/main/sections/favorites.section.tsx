@@ -39,7 +39,7 @@ export const FavoritesFooter: FCVM<MainPageViewModel> = observer(({ vm }) => {
         isDisabled={vm.favoriteStickers.length === 0}
         isLoading={vm.loadingStickerPack}
         onClick={() => vm.createStickerPack()}>
-        Опубликовать
+        Экспорт в Телеграм
       </Button>
     </div>
   );
