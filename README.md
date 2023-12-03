@@ -1,7 +1,7 @@
 # StickyVerse
 
 ## Сайт
-![screenshot](images/screenshot.png)
+![screenshot](docs/screenshot.png)
 [Попробовать!](https://gigachat-challenge-personality.vercel.app/)<br>
 [Сваггер с документаций к REST Api](https://kodiki-hack.ru:8000/rapidoc#get-/images)<br>
 [Примеры результатов](docs/README.md)
