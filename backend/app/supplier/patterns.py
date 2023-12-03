@@ -124,6 +124,13 @@ _patterns = [
         draw_styles=["mural art style", "book illustration", "Disney Pixar"],
     ),
     Pattern(
+        title="owl",
+        description="Люблю сов и всё что с ними связано",
+        themes=["Owl"],
+        moods=["Cute", "Funny", "Serious"],
+        draw_styles=["realism", "disney pixar", "pokemon card"],
+    ),
+    Pattern(
         title="anime",
         description="Анимешный подход!",
         themes=["anime", "anime girl", "kawai", "anime hero"],
