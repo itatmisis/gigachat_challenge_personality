@@ -17,6 +17,7 @@ services:
         condition: service_healthy
     volumes:
       - "./app/.env:/backend/app/.env"
+      - "/etc/letsencrypt/live/:/etc/letsencrypt/live/"
     ports:
       - 8000:8001
 
