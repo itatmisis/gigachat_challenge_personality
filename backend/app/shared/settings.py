@@ -8,6 +8,8 @@ class AppSettings(BaseSettings):
     uvicorn_port: int = 8000
     uvicorn_workers: int = mp.cpu_count() * 2
     uvicorn_log_level: str = "WARNING"
+    uvicorn_ssl_keyfile: str | None = None
+    uvicorn_ssl_certfile: str | None = None
 
     redis_host: str = "localhost"
     redis_port: int = 6379

@@ -21,4 +21,6 @@ if __name__ == "__main__":
         port=app_settings.uvicorn_port,
         workers=app_settings.uvicorn_workers,
         log_level=_nameToLevel[app_settings.uvicorn_log_level],
+        ssl_keyfile=app_settings.uvicorn_ssl_keyfile,
+        ssl_certfile=app_settings.uvicorn_ssl_certfile,
     )
